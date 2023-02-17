@@ -1,6 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.CRDDao;
+import com.epam.esm.dao.BasicDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.*;
@@ -26,7 +26,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     private final TagDao tagDao;
 
     @Autowired
-    public TagServiceImpl(CRDDao<Tag> dao, TagDao tagDao) {
+    public TagServiceImpl(BasicDao<Tag> dao, TagDao tagDao) {
         super(dao);
         this.tagDao = tagDao;
     }
@@ -48,6 +48,11 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     }
 
     @Override
+    public Tag update(long id, Tag entity) {
+        return tagDao.update(entity);
+    }
+
+    @Override
     @Transactional
     public void removeById(long id) {
         ExceptionResult exceptionResult = new ExceptionResult();
@@ -57,7 +62,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         }
 
         Optional<Tag> foundEntity = tagDao.findById(id);
-        if (!foundEntity.isPresent()) {
+        if (foundEntity.isEmpty()) {
             throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
         }
 
@@ -82,14 +87,14 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         }
 
         Pageable pageRequest = createPageRequest(page, size);
-        return tagDao.findWithFilters(requestParams, pageRequest);
+        return tagDao.search(requestParams, pageRequest);
     }
 
 
     @Override
     public Tag getMostPopularTagOfUserWithHighestCostOfAllOrders() {
         Optional<Tag> optionalTag = tagDao.findMostPopularTagOfUserWithHighestCostOfAllOrders();
-        if (!optionalTag.isPresent()) {
+        if (optionalTag.isEmpty()) {
             throw new NoSuchEntityException(TAG_NOT_FOUND);
         }
         return optionalTag.get();

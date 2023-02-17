@@ -1,6 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.CRDDao;
+import com.epam.esm.dao.BasicDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static com.epam.esm.exception.ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND;
 import static com.epam.esm.exception.ExceptionMessageKey.USER_NOT_FOUND;
+
 @Service
 public class OrderServiceImpl extends AbstractService<Order> implements OrderService {
     private final DateHandler dateHandler;
@@ -33,7 +34,7 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     private final GiftCertificateDao giftCertificateDao;
 
     @Autowired
-    public OrderServiceImpl(CRDDao<Order> dao, DateHandler dateHandler, OrderDao orderDao,
+    public OrderServiceImpl(BasicDao<Order> dao, DateHandler dateHandler, OrderDao orderDao,
                             UserDao userDao, GiftCertificateDao giftCertificateDao) {
         super(dao);
         this.dateHandler = dateHandler;
@@ -57,13 +58,13 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
         }
 
         Optional<User> optionalUser = userDao.findById(order.getUser().getId());
-        if (!optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             throw new NoSuchEntityException(USER_NOT_FOUND);
         }
         order.setUser(optionalUser.get());
 
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(order.getGiftCertificate().getId());
-        if (!optionalGiftCertificate.isPresent()) {
+        if (optionalGiftCertificate.isEmpty()) {
             throw new NoSuchEntityException(GIFT_CERTIFICATE_NOT_FOUND);
         }
         order.setGiftCertificate(optionalGiftCertificate.get());
@@ -71,6 +72,13 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
         order.setPrice(optionalGiftCertificate.get().getPrice());
         order.setPurchaseTime(dateHandler.getCurrentDate());
         return dao.insert(order);
+    }
+
+    @Override
+    public Order update(long id, Order entity) {
+
+        return orderDao.update(entity);
+
     }
 
     @Override
@@ -87,9 +95,7 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     public List<Order> getOrdersByUserId(long userId, int page, int size) {
         ExceptionResult exceptionResult = new ExceptionResult();
         OrderValidator.validateUserId(userId, exceptionResult);
-        if (!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
+        if (!exceptionResult.getExceptionMessages().isEmpty()) throw new IncorrectParameterException(exceptionResult);
         Pageable pageRequest = createPageRequest(page, size);
 
         return orderDao.findByUserId(userId, pageRequest);

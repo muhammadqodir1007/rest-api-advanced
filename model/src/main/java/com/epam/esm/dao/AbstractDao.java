@@ -43,7 +43,7 @@ public abstract class AbstractDao<T> {
         entityManager.remove(entity);
     }
 
-    public List<T> findWithFilters(MultiValueMap<String, String> fields, Pageable pageable) {
+    public List<T> search(MultiValueMap<String, String> fields, Pageable pageable) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = getQueryCreator().createGetQuery(fields, criteriaBuilder);
 

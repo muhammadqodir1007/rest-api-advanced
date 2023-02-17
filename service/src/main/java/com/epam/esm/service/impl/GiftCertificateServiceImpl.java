@@ -73,7 +73,8 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
         }
 
         Optional<GiftCertificate> foundGiftCertificate = giftCertificateDao.findById(id);
-        if (!foundGiftCertificate.isPresent()) {
+
+        if (foundGiftCertificate.isEmpty()) {
             throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
         }
 
@@ -133,7 +134,7 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
         }
 
         Pageable pageRequest = createPageRequest(page, size);
-        return giftCertificateDao.findWithFilters(requestParams, pageRequest);
+        return giftCertificateDao.search(requestParams, pageRequest);
     }
 
     private void removeDuplicateTags(GiftCertificate giftCertificate) {

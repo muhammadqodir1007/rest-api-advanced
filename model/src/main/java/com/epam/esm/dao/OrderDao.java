@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface OrderDao extends CRDDao<Order> {
+public interface OrderDao extends BasicDao<Order> {
 
     /**
      * Method for getting list of {@link Order} from a table by user ID.

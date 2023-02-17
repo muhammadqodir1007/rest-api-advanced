@@ -57,7 +57,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDto userById(@PathVariable long id) {
         User user = userService.getById(id);
-
         UserDto userDto = userDtoConverter.convertToDto(user);
         hateoasAdder.addLinks(userDto);
         return userDto;

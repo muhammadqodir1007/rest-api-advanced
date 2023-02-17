@@ -6,7 +6,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.List;
 import java.util.Optional;
 
-public interface CRDDao<T> {
+public interface BasicDao<T> {
 
     /**
      * Method for getting an entity object from a table by ID.
@@ -16,12 +16,15 @@ public interface CRDDao<T> {
      */
     Optional<T> findById(long id);
 
+    T update(T item);
+
     /**
      * Method for getting all entities from a table.
      *
      * @param pageable pageable object with pagination info (page number, page size)
      * @return List of all entities in the table
      */
+
     List<T> findAll(Pageable pageable);
 
     /**
@@ -46,5 +49,5 @@ public interface CRDDao<T> {
      * @param pageable pageable object with pagination info (page number, page size)
      * @return List of entity objects
      */
-    List<T> findWithFilters(MultiValueMap<String, String> fields, Pageable pageable);
+    List<T> search(MultiValueMap<String, String> fields, Pageable pageable);
 }

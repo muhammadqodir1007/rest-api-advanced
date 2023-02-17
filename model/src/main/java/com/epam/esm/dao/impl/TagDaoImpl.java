@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
 @Repository
 @Service
 @Transactional
@@ -58,5 +59,10 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
         entityManager.createNativeQuery(REMOVE_GIFT_CERTIFICATES_HAS_TAGS_QUERY)
                 .setParameter("tag_id_fk", id)
                 .executeUpdate();
+    }
+
+    @Override
+    public Tag update(Tag item) {
+        throw new UnsupportedOperationException();
     }
 }

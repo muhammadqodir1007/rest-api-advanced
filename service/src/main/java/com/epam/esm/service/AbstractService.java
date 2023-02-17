@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.CRDDao;
+import com.epam.esm.dao.BasicDao;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.ExceptionResult;
 import com.epam.esm.exception.IncorrectParameterException;
@@ -13,9 +13,9 @@ import org.springframework.util.MultiValueMap;
 import java.util.List;
 import java.util.Optional;
 public abstract class AbstractService<T> implements CRDService<T> {
-    protected final CRDDao<T> dao;
+    protected final BasicDao<T> dao;
 
-    public AbstractService(CRDDao<T> dao) {
+    public AbstractService(BasicDao<T> dao) {
         this.dao = dao;
     }
 

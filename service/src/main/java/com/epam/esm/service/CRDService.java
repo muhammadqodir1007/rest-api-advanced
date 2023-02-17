@@ -30,6 +30,14 @@ public interface CRDService<T> {
      * @return saved entity
      */
     T insert(T entity);
+    /**
+     * Method for updating an entity.
+     *
+     * @param id     ID of entity to update
+     * @param entity entity, which include information to update
+     * @return updated entity
+     */
+    T update(long id, T entity);
 
     /**
      * Method for removing an entity by ID.

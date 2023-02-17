@@ -1,26 +1,20 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.CRDDao;
-import com.epam.esm.entity.Order;
+import com.epam.esm.dao.BasicDao;
 import com.epam.esm.entity.User;
-import com.epam.esm.exception.ExceptionMessageKey;
-import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.service.AbstractService;
-import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
-import com.epam.esm.validator.IdentifiableValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl extends AbstractService<User> implements UserService {
 
     @Autowired
-    public UserServiceImpl(CRDDao<User> dao) {
+    public UserServiceImpl(BasicDao<User> dao) {
         super(dao);
     }
 

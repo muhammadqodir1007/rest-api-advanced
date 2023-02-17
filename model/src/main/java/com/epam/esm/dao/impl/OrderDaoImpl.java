@@ -11,6 +11,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 @Transactional
 public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
@@ -27,6 +28,11 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     }
 
     @Override
+    public Order update(Order item) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<Order> findAll(Pageable pageable) {
         throw new UnsupportedOperationException();
     }
@@ -37,7 +43,7 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     }
 
     @Override
-    public List<Order> findWithFilters(MultiValueMap<String, String> fields, Pageable pageable) {
+    public List<Order> search(MultiValueMap<String, String> fields, Pageable pageable) {
         throw new UnsupportedOperationException();
     }
 

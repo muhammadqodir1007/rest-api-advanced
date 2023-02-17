@@ -15,4 +15,12 @@ public class ErrorResponse {
     public String getErrorMessage() {
         return errorMessage;
     }
+
+//    public String getErrorCode() {
+//        return errorCode;
+//    }
+//
+//    public String getErrorMessage() {
+//        return errorMessage;
+//    }
 }

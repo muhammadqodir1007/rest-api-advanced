@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ public class GiftCertificate extends Identifiable {
     private String description;
 
     @Column(name = "price")
+    @DecimalMin(value = "0.0",message = "price error")
     private BigDecimal price;
 
     @Column(name = "duration")
@@ -44,8 +46,6 @@ public class GiftCertificate extends Identifiable {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
-
-
 
 
     @Override

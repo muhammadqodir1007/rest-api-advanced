@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private long id;
     private String name;
     private String description;
+    @DecimalMin(value = "0.0")
     private BigDecimal price;
     private int duration;
 

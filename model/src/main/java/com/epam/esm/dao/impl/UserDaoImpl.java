@@ -37,7 +37,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     }
 
     @Override
-    public List<User> findWithFilters(MultiValueMap<String, String> fields, Pageable pageable) {
+    public List<User> search(MultiValueMap<String, String> fields, Pageable pageable) {
         throw new UnsupportedOperationException();
     }
 

@@ -3,7 +3,6 @@ package com.epam.esm.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class ExceptionResult {
     private final Map<String, Object[]> exceptionMessages;
 

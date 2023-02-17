@@ -31,7 +31,7 @@ public class GiftCertificateValidator {
         IdentifiableValidator.validateExistenceOfId(giftCertificate.getId(), er);
         validateName(giftCertificate.getName(), er);
         validateDescription(giftCertificate.getDescription(), er);
-        validatePrice(giftCertificate.getPrice(), er);
+        //validatePrice(giftCertificate.getPrice(), er);
         validateDuration(giftCertificate.getDuration(), er);
         validateListOfTags(giftCertificate.getTags(), er);
     }

@@ -3,7 +3,8 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.GiftCertificate;
 
 import java.util.Optional;
-public interface GiftCertificateDao extends CRUDDao<GiftCertificate> {
+
+public interface GiftCertificateDao extends BasicDao<GiftCertificate> {
 
     /**
      * Method for getting a gift certificate from a table with a specific name.

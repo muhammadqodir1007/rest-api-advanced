@@ -3,7 +3,7 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.Tag;
 
 import java.util.Optional;
-public interface TagDao extends CRDDao<Tag> {
+public interface TagDao extends BasicDao<Tag> {
 
     /**
      * Method for getting a tag from a table with a specific name.

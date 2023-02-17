@@ -1,6 +1,5 @@
 package com.epam.esm.exception;
 
-
 public class IncorrectParameterException extends RuntimeException {
     private final ExceptionResult exceptionResult;
 
