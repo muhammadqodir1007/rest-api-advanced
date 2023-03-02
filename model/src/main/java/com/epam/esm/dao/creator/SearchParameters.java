@@ -2,7 +2,7 @@ package com.epam.esm.dao.creator;
 
 import lombok.experimental.UtilityClass;
 @UtilityClass
-public class FilterParameters {
+public class SearchParameters {
     /**
      * Filter options.
      */

@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.esm.dao.creator.FilterParameters.NAME;
-import static com.epam.esm.dao.creator.FilterParameters.TAG_NAME;
+import static com.epam.esm.dao.creator.SearchParameters.NAME;
+import static com.epam.esm.dao.creator.SearchParameters.TAG_NAME;
 @Component
 public class GiftCertificateQueryCreator extends AbstractQueryCreator<GiftCertificate> {
     private static final Class<GiftCertificate> GIFT_CERTIFICATE_CLASS = GiftCertificate.class;

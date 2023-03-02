@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.epam.esm.dao.creator.FilterParameters.*;
+import static com.epam.esm.dao.creator.SearchParameters.*;
 
 
 public abstract class AbstractQueryCreator<T> implements QueryCreator<T> {
@@ -65,7 +65,7 @@ public abstract class AbstractQueryCreator<T> implements QueryCreator<T> {
                                        CriteriaQuery<T> criteriaQuery, Root<T> root) {
         String sortType = getSingleMultiValueMapParameter(fields, SORT_BY_CREATE_DATE);
         if (sortType != null) {
-            String CREATE_DATE = "create_date";
+            String CREATE_DATE = "createDate";
             if (Objects.equals(sortType, SortType.DESC.getSortTypeName())) {
                 criteriaQuery.orderBy(criteriaBuilder.desc(root.get(CREATE_DATE)));
             }
