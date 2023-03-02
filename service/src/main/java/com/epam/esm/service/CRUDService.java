@@ -4,7 +4,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
-public interface CRDService<T> {
+public interface CRUDService<T> {
 
     /**
      * Method for getting an entity object by ID.
@@ -54,5 +54,5 @@ public interface CRDService<T> {
      * @param size          page size for pagination
      * @return List of gift certificates
      */
-    List<T> doFilter(MultiValueMap<String, String> requestParams, int page, int size);
+    List<T> search(MultiValueMap<String, String> requestParams, int page, int size);
 }

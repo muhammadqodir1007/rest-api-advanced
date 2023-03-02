@@ -34,7 +34,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public List<User> doFilter(MultiValueMap<String, String> requestParams, int page, int size) {
+    public List<User> search(MultiValueMap<String, String> requestParams, int page, int size) {
         throw new UnsupportedOperationException();
     }
 }

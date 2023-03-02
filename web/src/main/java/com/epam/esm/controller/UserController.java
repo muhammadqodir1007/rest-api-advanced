@@ -3,9 +3,9 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.User;
-import com.epam.esm.hateoas.HateoasAdder;
+import com.epam.esm.hateoas.impl.UserHateoasAdder;
 import com.epam.esm.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,19 +14,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
     private final DtoConverter<User, UserDto> userDtoConverter;
-    private final HateoasAdder<UserDto> hateoasAdder;
-
-    @Autowired
-    public UserController(UserService userService, DtoConverter<User, UserDto> userDtoConverter,
-                          HateoasAdder<UserDto> hateoasAdder) {
-        this.userService = userService;
-        this.userDtoConverter = userDtoConverter;
-        this.hateoasAdder = hateoasAdder;
-    }
+    private final UserHateoasAdder hateoasAdder;
 
     /**
      * Method for getting all users from data source.
@@ -37,14 +29,10 @@ public class UserController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> allUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page,
-                                  @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
+    public List<UserDto> allUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
         List<User> users = userService.getAll(page, size);
 
-        return users.stream()
-                .map(userDtoConverter::convertToDto)
-                .peek(hateoasAdder::addLinks)
-                .collect(Collectors.toList());
+        return users.stream().map(userDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
     }
 
     /**

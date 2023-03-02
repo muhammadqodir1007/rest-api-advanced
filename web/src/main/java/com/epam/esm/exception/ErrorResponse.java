@@ -16,11 +16,4 @@ public class ErrorResponse {
         return errorMessage;
     }
 
-//    public String getErrorCode() {
-//        return errorCode;
-//    }
-//
-//    public String getErrorMessage() {
-//        return errorMessage;
-//    }
 }

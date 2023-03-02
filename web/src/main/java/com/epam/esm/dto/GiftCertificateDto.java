@@ -33,4 +33,11 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private LocalDateTime lastUpdateDate;
 
     private List<Tag> tags;
+
+    public GiftCertificateDto(String name, String description, BigDecimal price, int duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+    }
 }

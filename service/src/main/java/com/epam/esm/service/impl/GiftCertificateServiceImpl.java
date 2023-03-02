@@ -3,14 +3,13 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.*;
+import com.epam.esm.exception.DuplicateEntityException;
+import com.epam.esm.exception.ExceptionMessageKey;
+import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.handler.DateHandler;
 import com.epam.esm.logic.renovator.Updater;
 import com.epam.esm.service.AbstractService;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.validator.GiftCertificateValidator;
-import com.epam.esm.validator.IdentifiableValidator;
-import com.epam.esm.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.esm.dao.creator.FilterParameters.*;
 @Service
 public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate> implements GiftCertificateService {
     private final GiftCertificateDao giftCertificateDao;
@@ -42,11 +40,6 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     @Override
     @Transactional
     public GiftCertificate insert(GiftCertificate giftCertificate) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        GiftCertificateValidator.validate(giftCertificate, exceptionResult);
-        if (!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
 
         String giftCertificateName = giftCertificate.getName();
         boolean isGiftCertificateExist = giftCertificateDao.findByName(giftCertificateName).isPresent();
@@ -66,11 +59,6 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     @Override
     @Transactional
     public void removeById(long id) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        IdentifiableValidator.validateId(id, exceptionResult);
-        if (!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
 
         Optional<GiftCertificate> foundGiftCertificate = giftCertificateDao.findById(id);
 
@@ -85,15 +73,9 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     @Override
     @Transactional
     public GiftCertificate update(long id, GiftCertificate giftCertificate) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        IdentifiableValidator.validateId(id, exceptionResult);
-        GiftCertificateValidator.validateForUpdate(giftCertificate, exceptionResult);
-        if (!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
 
         Optional<GiftCertificate> oldGiftCertificate = dao.findById(id);
-        if (!oldGiftCertificate.isPresent()) {
+        if (oldGiftCertificate.isEmpty()) {
             throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
         }
         String giftCertificateName = giftCertificate.getName();
@@ -109,30 +91,7 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     }
 
     @Override
-    public List<GiftCertificate> doFilter(MultiValueMap<String, String> requestParams, int page, int size) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        String name = getSingleRequestParameter(requestParams, NAME);
-        if (name != null) {
-            GiftCertificateValidator.validateName(name, exceptionResult);
-        }
-        List<String> tagNames = requestParams.get(TAG_NAME);
-        if (tagNames != null) {
-            for (String tagName : tagNames) {
-                TagValidator.validateName(tagName, exceptionResult);
-            }
-        }
-        String sortNameType = getSingleRequestParameter(requestParams, SORT_BY_NAME);
-        if (sortNameType != null) {
-            IdentifiableValidator.validateSortType(sortNameType.toUpperCase(), exceptionResult);
-        }
-        String sortCreateDateType = getSingleRequestParameter(requestParams, SORT_BY_CREATE_DATE);
-        if (sortCreateDateType != null) {
-            IdentifiableValidator.validateSortType(sortCreateDateType.toUpperCase(), exceptionResult);
-        }
-        if (!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
-
+    public List<GiftCertificate> search(MultiValueMap<String, String> requestParams, int page, int size) {
         Pageable pageRequest = createPageRequest(page, size);
         return giftCertificateDao.search(requestParams, pageRequest);
     }

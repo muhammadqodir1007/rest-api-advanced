@@ -3,30 +3,26 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.Order;
-import com.epam.esm.hateoas.HateoasAdder;
+import com.epam.esm.hateoas.impl.OrderHateoasAdder;
 import com.epam.esm.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
 
     private final DtoConverter<Order, OrderDto> orderDtoConverter;
-    private final HateoasAdder<OrderDto> hateoasAdder;
 
-    @Autowired
-    public OrderController(OrderService orderService, DtoConverter<Order, OrderDto> orderDtoConverter,
-                           HateoasAdder<OrderDto> hateoasAdder) {
-        this.orderService = orderService;
-        this.orderDtoConverter = orderDtoConverter;
-        this.hateoasAdder = hateoasAdder;
-    }
+    private final OrderHateoasAdder hateoasAdder;
+
 
     /**
      * Method for getting order by ID.
@@ -52,7 +48,7 @@ public class OrderController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto createOrder(@RequestBody OrderDto order) {
+    public OrderDto createOrder(@Valid @RequestBody OrderDto order) {
         Order addedOrder = orderService.insert(orderDtoConverter.convertToEntity(order));
 
         OrderDto orderDto = orderDtoConverter.convertToDto(addedOrder);
@@ -70,14 +66,9 @@ public class OrderController {
      */
     @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> ordersByUserId(@PathVariable long userId,
-                                         @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-                                         @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
+    public List<OrderDto> ordersByUserId(@PathVariable long userId, @RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
         List<Order> orders = orderService.getOrdersByUserId(userId, page, size);
 
-        return orders.stream()
-                .map(orderDtoConverter::convertToDto)
-                .peek(hateoasAdder::addLinks)
-                .collect(Collectors.toList());
+        return orders.stream().map(orderDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
     }
 }

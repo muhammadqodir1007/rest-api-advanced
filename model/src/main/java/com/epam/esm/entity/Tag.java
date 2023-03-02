@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,8 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 
@@ -15,9 +18,19 @@ import java.util.Objects;
 @Getter
 @Setter
 @RequiredArgsConstructor
+
 @Table(name = "tags")
 public class Tag extends Identifiable {
+
+
+    public Tag(long id, String name) {
+        super(id);
+        this.name = name;
+    }
+
     @Column(name = "name")
+    @NotBlank
+    @Size(min = 3, max = 45)
     private String name;
 
 

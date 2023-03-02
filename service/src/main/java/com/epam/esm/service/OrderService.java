@@ -3,7 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.entity.Order;
 
 import java.util.List;
-public interface OrderService extends CRDService<Order> {
+public interface OrderService extends CRUDService<Order> {
 
     /**
      * Method for getting list of {@link Order} from database by user ID.

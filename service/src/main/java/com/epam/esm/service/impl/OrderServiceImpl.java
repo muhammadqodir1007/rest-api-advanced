@@ -13,7 +13,6 @@ import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.handler.DateHandler;
 import com.epam.esm.service.AbstractService;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.validator.OrderValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,7 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     private final GiftCertificateDao giftCertificateDao;
 
     @Autowired
-    public OrderServiceImpl(BasicDao<Order> dao, DateHandler dateHandler, OrderDao orderDao,
-                            UserDao userDao, GiftCertificateDao giftCertificateDao) {
+    public OrderServiceImpl(BasicDao<Order> dao, DateHandler dateHandler, OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao) {
         super(dao);
         this.dateHandler = dateHandler;
         this.orderDao = orderDao;
@@ -51,12 +49,6 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     @Override
     @Transactional
     public Order insert(Order order) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        OrderValidator.validate(order, exceptionResult);
-        if (!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
-
         Optional<User> optionalUser = userDao.findById(order.getUser().getId());
         if (optionalUser.isEmpty()) {
             throw new NoSuchEntityException(USER_NOT_FOUND);
@@ -68,7 +60,6 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
             throw new NoSuchEntityException(GIFT_CERTIFICATE_NOT_FOUND);
         }
         order.setGiftCertificate(optionalGiftCertificate.get());
-
         order.setPrice(optionalGiftCertificate.get().getPrice());
         order.setPurchaseTime(dateHandler.getCurrentDate());
         return dao.insert(order);
@@ -76,9 +67,7 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
 
     @Override
     public Order update(long id, Order entity) {
-
         return orderDao.update(entity);
-
     }
 
     @Override
@@ -87,15 +76,12 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     }
 
     @Override
-    public List<Order> doFilter(MultiValueMap<String, String> requestParams, int page, int size) {
+    public List<Order> search(MultiValueMap<String, String> requestParams, int page, int size) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public List<Order> getOrdersByUserId(long userId, int page, int size) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        OrderValidator.validateUserId(userId, exceptionResult);
-        if (!exceptionResult.getExceptionMessages().isEmpty()) throw new IncorrectParameterException(exceptionResult);
         Pageable pageRequest = createPageRequest(page, size);
 
         return orderDao.findByUserId(userId, pageRequest);

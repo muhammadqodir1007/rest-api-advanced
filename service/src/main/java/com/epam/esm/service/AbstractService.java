@@ -5,14 +5,13 @@ import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.ExceptionResult;
 import com.epam.esm.exception.IncorrectParameterException;
 import com.epam.esm.exception.NoSuchEntityException;
-import com.epam.esm.validator.IdentifiableValidator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Optional;
-public abstract class AbstractService<T> implements CRDService<T> {
+public abstract class AbstractService<T> implements CRUDService<T> {
     protected final BasicDao<T> dao;
 
     public AbstractService(BasicDao<T> dao) {
@@ -21,12 +20,6 @@ public abstract class AbstractService<T> implements CRDService<T> {
 
     @Override
     public T getById(long id) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        IdentifiableValidator.validateId(id, exceptionResult);
-        if(!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
-
         Optional<T> optionalEntity = dao.findById(id);
         if (optionalEntity.isEmpty()) {
             throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
@@ -43,17 +36,10 @@ public abstract class AbstractService<T> implements CRDService<T> {
 
     @Override
     public void removeById(long id) {
-        ExceptionResult exceptionResult = new ExceptionResult();
-        IdentifiableValidator.validateId(id, exceptionResult);
-        if(!exceptionResult.getExceptionMessages().isEmpty()) {
-            throw new IncorrectParameterException(exceptionResult);
-        }
-
         Optional<T> foundEntity = dao.findById(id);
         if (foundEntity.isEmpty()) {
             throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
         }
-
         dao.removeById(id);
     }
 

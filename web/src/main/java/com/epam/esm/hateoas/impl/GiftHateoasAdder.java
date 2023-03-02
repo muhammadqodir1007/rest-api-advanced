@@ -1,6 +1,6 @@
 package com.epam.esm.hateoas.impl;
 
-import com.epam.esm.controller.GiftCertificateController;
+import com.epam.esm.controller.GiftController;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.hateoas.HateoasAdder;
@@ -10,8 +10,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GiftCertificateHateoasAdder implements HateoasAdder<GiftCertificateDto> {
-    private static final Class<GiftCertificateController> GIFT_CONTROLLER_CLASS = GiftCertificateController.class;
+public class GiftHateoasAdder implements HateoasAdder<GiftCertificateDto> {
+    private static final Class<GiftController> GIFT_CONTROLLER_CLASS = GiftController.class;
     private static final Class<TagController> TAG_CONTROLLER = TagController.class;
 
     @Override

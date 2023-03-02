@@ -3,12 +3,16 @@ spring:
     hikari:
       maximum-pool-size: 5
     username: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/module_3
     password: 1007
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/master.yaml
+    enabled: true
 
 
 server:

@@ -6,7 +6,7 @@ import com.epam.esm.entity.GiftCertificate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GiftCertificateDtoConverter implements DtoConverter<GiftCertificate, GiftCertificateDto> {
+public class GiftDtoConverter implements DtoConverter<GiftCertificate, GiftCertificateDto> {
 
     @Override
     public GiftCertificate convertToEntity(GiftCertificateDto dto) {

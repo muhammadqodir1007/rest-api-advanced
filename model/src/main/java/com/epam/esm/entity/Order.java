@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,6 +19,8 @@ import java.util.Objects;
 public class Order extends Identifiable {
 
     @Column(name = "price")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "999999.99")
     private BigDecimal price;
 
     @Column(name = "purchase_time")

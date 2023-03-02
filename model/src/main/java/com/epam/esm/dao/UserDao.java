@@ -9,6 +9,5 @@ public interface UserDao extends BasicDao<User> {
      * @return Optional of found user
      * @deprecated Method for finding user by highest cost of all orders.
      */
-    @Deprecated
     Optional<User> findByHighestCostOfAllOrders();
 }

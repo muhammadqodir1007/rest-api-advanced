@@ -4,10 +4,9 @@ package com.epam.esm.entity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,16 +20,22 @@ import java.util.Objects;
 public class GiftCertificate extends Identifiable {
 
     @Column(name = "name")
+    @NotBlank(message = "Name is mandatory")
+    @Size(max = 45, min = 3)
     private String name;
 
     @Column(name = "description")
+    @Size(max = 300)
     private String description;
 
     @Column(name = "price")
-    @DecimalMin(value = "0.0",message = "price error")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "999999.99")
     private BigDecimal price;
 
     @Column(name = "duration")
+    @Min(value = 0)
+    @Max(value = 366)
     private int duration;
 
     @Column(name = "create_date")
@@ -47,6 +52,16 @@ public class GiftCertificate extends Identifiable {
     )
     private List<Tag> tags;
 
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, List<Tag> tags) {
+        super(id);
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tags = tags;
+    }
 
     @Override
     public boolean equals(Object o) {

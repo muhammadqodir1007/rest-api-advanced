@@ -3,13 +3,12 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.hateoas.HateoasAdder;
+import com.epam.esm.hateoas.impl.GiftHateoasAdder;
 import com.epam.esm.service.GiftCertificateService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,20 +16,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/certificates")
-public class GiftCertificateController {
+public class GiftController {
     private final GiftCertificateService giftCertificateService;
 
     private final DtoConverter<GiftCertificate, GiftCertificateDto> giftCertificateDtoConverter;
-    private final HateoasAdder<GiftCertificateDto> hateoasAdder;
+    private final GiftHateoasAdder hateoasAdder;
 
-    @Autowired
-    public GiftCertificateController(GiftCertificateService giftCertificateService, HateoasAdder<GiftCertificateDto> hateoasAdder,
-                                     DtoConverter<GiftCertificate, GiftCertificateDto> giftCertificateDtoConverter) {
-        this.giftCertificateService = giftCertificateService;
-        this.hateoasAdder = hateoasAdder;
-        this.giftCertificateDtoConverter = giftCertificateDtoConverter;
-    }
 
     /**
      * Method for getting gift certificate by ID.
@@ -70,8 +63,7 @@ public class GiftCertificateController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto createGiftCertificate(@Valid @RequestBody GiftCertificateDto giftCertificate) {
-        GiftCertificate addedGiftCertificate = giftCertificateService.insert(
-                giftCertificateDtoConverter.convertToEntity(giftCertificate));
+        GiftCertificate addedGiftCertificate = giftCertificateService.insert(giftCertificateDtoConverter.convertToEntity(giftCertificate));
 
         GiftCertificateDto giftCertificateDto = giftCertificateDtoConverter.convertToDto(addedGiftCertificate);
         hateoasAdder.addLinks(giftCertificateDto);
@@ -87,10 +79,8 @@ public class GiftCertificateController {
      */
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto updateGiftCertificate(@PathVariable long id,
-                                                    @RequestBody GiftCertificateDto giftCertificate) {
-        GiftCertificate updatedGiftCertificate = giftCertificateService.update(id,
-                giftCertificateDtoConverter.convertToEntity(giftCertificate));
+    public GiftCertificateDto updateGiftCertificate(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificate) {
+        GiftCertificate updatedGiftCertificate = giftCertificateService.update(id, giftCertificateDtoConverter.convertToEntity(giftCertificate));
 
         GiftCertificateDto giftCertificateDto = giftCertificateDtoConverter.convertToDto(updatedGiftCertificate);
         hateoasAdder.addLinks(giftCertificateDto);
@@ -108,14 +98,9 @@ public class GiftCertificateController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<GiftCertificateDto> giftCertificatesByParameter(@RequestParam MultiValueMap<String, String> allRequestParams,
-                                                                @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-                                                                @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
-        List<GiftCertificate> giftCertificates = giftCertificateService.doFilter(allRequestParams, page, size);
+    public List<GiftCertificateDto> giftCertificatesByParameter(@RequestParam MultiValueMap<String, String> allRequestParams, @RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
+        List<GiftCertificate> giftCertificates = giftCertificateService.search(allRequestParams, page, size);
 
-        return giftCertificates.stream()
-                .map(giftCertificateDtoConverter::convertToDto)
-                .peek(hateoasAdder::addLinks)
-                .collect(Collectors.toList());
+        return giftCertificates.stream().map(giftCertificateDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
     }
 }
