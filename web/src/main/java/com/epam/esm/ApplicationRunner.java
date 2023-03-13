@@ -21,4 +21,6 @@ public class ApplicationRunner {
         DispatcherServlet dispatcherServlet = (DispatcherServlet) ctx.getBean("dispatcherServlet");
         dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
     }
+
+
 }

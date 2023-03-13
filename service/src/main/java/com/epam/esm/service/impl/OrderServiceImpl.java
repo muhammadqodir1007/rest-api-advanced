@@ -7,10 +7,7 @@ import com.epam.esm.dao.UserDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
-import com.epam.esm.exception.ExceptionResult;
-import com.epam.esm.exception.IncorrectParameterException;
 import com.epam.esm.exception.NoSuchEntityException;
-import com.epam.esm.logic.handler.DateHandler;
 import com.epam.esm.service.AbstractService;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +24,13 @@ import static com.epam.esm.exception.ExceptionMessageKey.USER_NOT_FOUND;
 
 @Service
 public class OrderServiceImpl extends AbstractService<Order> implements OrderService {
-    private final DateHandler dateHandler;
     private final OrderDao orderDao;
     private final UserDao userDao;
     private final GiftCertificateDao giftCertificateDao;
 
     @Autowired
-    public OrderServiceImpl(BasicDao<Order> dao, DateHandler dateHandler, OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao) {
+    public OrderServiceImpl(BasicDao<Order> dao,  OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao) {
         super(dao);
-        this.dateHandler = dateHandler;
         this.orderDao = orderDao;
         this.userDao = userDao;
         this.giftCertificateDao = giftCertificateDao;
@@ -61,7 +56,6 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
         }
         order.setGiftCertificate(optionalGiftCertificate.get());
         order.setPrice(optionalGiftCertificate.get().getPrice());
-        order.setPurchaseTime(dateHandler.getCurrentDate());
         return dao.insert(order);
     }
 

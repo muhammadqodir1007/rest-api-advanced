@@ -37,6 +37,14 @@ public class Order extends Identifiable {
     public Order() {
     }
 
+
+
+
+    @PrePersist
+    public void onPrePersist() {
+        setPurchaseTime(LocalDateTime.now());
+    }
+
     public Order(long id, BigDecimal price, LocalDateTime purchaseTime, User user, GiftCertificate giftCertificate) {
         super(id);
         this.price = price;

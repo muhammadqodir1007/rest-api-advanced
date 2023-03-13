@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,8 +17,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
 @Table(name = "gift_certificates")
 public class GiftCertificate extends Identifiable {
+
 
     @Column(name = "name")
     @NotBlank(message = "Name is mandatory")
@@ -62,6 +65,34 @@ public class GiftCertificate extends Identifiable {
         this.lastUpdateDate = lastUpdateDate;
         this.tags = tags;
     }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    @PrePersist
+    public void onPrePersist() {
+        setCreateDate(LocalDateTime.now());
+        setLastUpdateDate(LocalDateTime.now());
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        setLastUpdateDate(LocalDateTime.now());
+    }
+
 
     @Override
     public boolean equals(Object o) {

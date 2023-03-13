@@ -2,7 +2,6 @@ package com.epam.esm.logic.renovator.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.logic.handler.DateHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateUpdaterTest {
@@ -36,9 +34,10 @@ class GiftCertificateUpdaterTest {
     private DateHandler dateHandler = Mockito.mock(DateHandler.class);
     @InjectMocks
     private GiftCertificateUpdater renovator;
+
     @Test
     void testUpdateObject() {
-        when(dateHandler.getCurrentDate()).thenReturn(UPDATED_DATE);
+        //  when(dateHandler.getCurrentDate()).thenReturn(UPDATED_DATE);
         GiftCertificate actual = renovator.updateObject(NEW_GIFT_CERTIFICATE, OLD_GIFT_CERTIFICATE);
         assertEquals(UPDATED_GIFT_CERTIFICATE, actual);
     }

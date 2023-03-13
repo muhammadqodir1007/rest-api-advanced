@@ -28,6 +28,10 @@ public class Tag extends Identifiable {
         this.name = name;
     }
 
+    public Tag(String name) {
+        this.name = name;
+    }
+
     @Column(name = "name")
     @NotBlank
     @Size(min = 3, max = 45)

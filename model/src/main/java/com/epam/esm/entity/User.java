@@ -34,6 +34,10 @@ public class User extends Identifiable {
         this.name = name;
     }
 
+    public User(String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

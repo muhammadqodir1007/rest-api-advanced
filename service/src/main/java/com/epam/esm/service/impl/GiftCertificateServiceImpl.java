@@ -6,7 +6,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DuplicateEntityException;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.NoSuchEntityException;
-import com.epam.esm.logic.handler.DateHandler;
 import com.epam.esm.logic.renovator.Updater;
 import com.epam.esm.service.AbstractService;
 import com.epam.esm.service.GiftCertificateService;
@@ -23,16 +22,14 @@ import java.util.Optional;
 @Service
 public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate> implements GiftCertificateService {
     private final GiftCertificateDao giftCertificateDao;
-    private final DateHandler dateHandler;
     private final Updater<GiftCertificate> updater;
     private final Updater<Tag> tagUpdater;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, DateHandler dateHandler,
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao,
                                       Updater<GiftCertificate> updater, Updater<Tag> tagUpdater) {
         super(giftCertificateDao);
         this.giftCertificateDao = giftCertificateDao;
-        this.dateHandler = dateHandler;
         this.updater = updater;
         this.tagUpdater = tagUpdater;
     }
@@ -42,13 +39,11 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     public GiftCertificate insert(GiftCertificate giftCertificate) {
 
         String giftCertificateName = giftCertificate.getName();
-        boolean isGiftCertificateExist = giftCertificateDao.findByName(giftCertificateName).isPresent();
-        if (isGiftCertificateExist) {
-            throw new DuplicateEntityException(ExceptionMessageKey.GIFT_CERTIFICATE_EXIST);
-        }
 
-        giftCertificate.setCreateDate(dateHandler.getCurrentDate());
-        giftCertificate.setLastUpdateDate(dateHandler.getCurrentDate());
+        giftCertificateDao.findByName(giftCertificateName).ifPresent(giftCertificate1 -> {
+            throw new DuplicateEntityException(ExceptionMessageKey.GIFT_CERTIFICATE_EXIST);
+        });
+
         removeDuplicateTags(giftCertificate);
         List<Tag> tagsToPersist = tagUpdater.updateListFromDatabase(giftCertificate.getTags());
         giftCertificate.setTags(tagsToPersist);
@@ -73,22 +68,20 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     @Override
     @Transactional
     public GiftCertificate update(long id, GiftCertificate giftCertificate) {
+        GiftCertificate oldGiftCertificate = dao.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
 
-        Optional<GiftCertificate> oldGiftCertificate = dao.findById(id);
-        if (oldGiftCertificate.isEmpty()) {
-            throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
-        }
         String giftCertificateName = giftCertificate.getName();
         boolean isGiftCertificateExist = giftCertificateDao.findByName(giftCertificateName).isPresent();
-        if (isGiftCertificateExist && !oldGiftCertificate.get().getName().equals(giftCertificateName)) {
+        if (isGiftCertificateExist && !oldGiftCertificate.getName().equals(giftCertificateName)) {
             throw new DuplicateEntityException(ExceptionMessageKey.GIFT_CERTIFICATE_EXIST);
         }
 
         removeDuplicateTags(giftCertificate);
         giftCertificate.setTags(tagUpdater.updateListFromDatabase(giftCertificate.getTags()));
-        GiftCertificate newGiftCertificate = updater.updateObject(giftCertificate, oldGiftCertificate.get());
-        return giftCertificateDao.update(newGiftCertificate);
+        return giftCertificateDao.update(updater.updateObject(giftCertificate, oldGiftCertificate));
     }
+
 
     @Override
     public List<GiftCertificate> search(MultiValueMap<String, String> requestParams, int page, int size) {

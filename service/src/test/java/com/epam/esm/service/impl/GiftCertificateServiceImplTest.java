@@ -10,17 +10,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +39,7 @@ class GiftCertificateServiceImplTest {
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
 
+
     private static final Tag TAG_2 = new Tag(2, "tagName3");
 
     private static final GiftCertificate GIFT_CERTIFICATE_1 = new GiftCertificate(1, "giftCertificate1", "description1", new BigDecimal("10.1"), 1, LocalDateTime.parse("2020-08-29T06:12:15.156"), LocalDateTime.parse("2020-08-29T06:12:15.156"), Arrays.asList(new Tag(1, "tagName1"), new Tag(2, "tagName3"), new Tag(3, "tagName5")));
@@ -42,10 +47,22 @@ class GiftCertificateServiceImplTest {
     private static final GiftCertificate GIFT_CERTIFICATE_2 = new GiftCertificate(2, "giftCertificate3", "description3", new BigDecimal("30.3"), 3, LocalDateTime.parse("2019-08-29T06:12:15.156"), LocalDateTime.parse("2019-08-29T06:12:15.156"), Collections.singletonList(new Tag(2, "tagName3")));
 
     private static final GiftCertificate GIFT_CERTIFICATE_3 = new GiftCertificate(3, "giftCertificate2", "description2", new BigDecimal("20.2"), 2, LocalDateTime.parse("2018-08-29T06:12:15.156"), LocalDateTime.parse("2018-08-29T06:12:15.156"), null);
+    private static final GiftCertificate GIFT_CERTIFICATE_4 = new GiftCertificate(4, "giftCertificate2", "description2", new BigDecimal("20.2"), 2, LocalDateTime.now(), LocalDateTime.now(), null);
 
     private static final String SORT_PARAMETER = "DESC";
     private static final int PAGE = 0;
     private static final int SIZE = 5;
+
+
+    @Test
+    void shouldInsert() {
+        when(giftCertificateDao.insert(any())).thenReturn(GIFT_CERTIFICATE_4);
+       // when(dateHandler.getCurrentDate()).thenReturn(LocalDateTime.now());
+
+        GiftCertificate certificate = giftCertificateService.insert(new GiftCertificate("name", "description", BigDecimal.valueOf(34), 34));
+
+        assertEquals(GIFT_CERTIFICATE_4.getName(), certificate.getName());
+    }
 
     @Test
     void testGetById() {

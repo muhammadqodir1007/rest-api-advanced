@@ -1,8 +1,10 @@
 package com.epam.esm.logic.renovator.impl;
+
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.logic.renovator.Updater;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

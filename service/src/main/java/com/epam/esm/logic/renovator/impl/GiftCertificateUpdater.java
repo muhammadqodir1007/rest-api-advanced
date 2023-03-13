@@ -2,9 +2,7 @@ package com.epam.esm.logic.renovator.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.logic.handler.DateHandler;
 import com.epam.esm.logic.renovator.Updater;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,12 +11,6 @@ import java.util.Objects;
 
 @Component
 public class GiftCertificateUpdater implements Updater<GiftCertificate> {
-    private final DateHandler dateHandler;
-
-    @Autowired
-    public GiftCertificateUpdater(DateHandler dateHandler) {
-        this.dateHandler = dateHandler;
-    }
 
     @Override
     public GiftCertificate updateObject(GiftCertificate newGiftCertificate, GiftCertificate oldGiftCertificate) {
@@ -47,7 +39,6 @@ public class GiftCertificateUpdater implements Updater<GiftCertificate> {
             oldGiftCertificate.setTags(tags);
         }
 
-        oldGiftCertificate.setLastUpdateDate(dateHandler.getCurrentDate());
         return oldGiftCertificate;
     }
 
