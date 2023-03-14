@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootApplication(scanBasePackages = "com.epam.esm")
 public class ApplicationRunner {
 
+
     /**
      * The entry point of Spring Boot application.
      *
@@ -20,7 +21,12 @@ public class ApplicationRunner {
 
         DispatcherServlet dispatcherServlet = (DispatcherServlet) ctx.getBean("dispatcherServlet");
         dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
+
+
     }
 
 
 }
+
+
+

@@ -20,21 +20,21 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public User update(long id, User user) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Operation not supported for User entity.");
     }
 
     @Override
     public User insert(User user) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Operation not supported for User entity.");
     }
 
     @Override
     public void removeById(long id) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Operation not supported for User entity.");
     }
 
     @Override
     public List<User> search(MultiValueMap<String, String> requestParams, int page, int size) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Operation not supported for User entity.");
     }
 }

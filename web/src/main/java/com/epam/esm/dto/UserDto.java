@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.validation.text.ValidName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,5 +15,6 @@ import org.springframework.hateoas.RepresentationModel;
 public class UserDto extends RepresentationModel<UserDto> {
 
     private long id;
+    @ValidName
     private String name;
 }

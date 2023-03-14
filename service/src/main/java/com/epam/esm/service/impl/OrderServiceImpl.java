@@ -17,7 +17,6 @@ import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 import static com.epam.esm.exception.ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND;
 import static com.epam.esm.exception.ExceptionMessageKey.USER_NOT_FOUND;
@@ -29,7 +28,7 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     private final GiftCertificateDao giftCertificateDao;
 
     @Autowired
-    public OrderServiceImpl(BasicDao<Order> dao,  OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao) {
+    public OrderServiceImpl(BasicDao<Order> dao, OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao) {
         super(dao);
         this.orderDao = orderDao;
         this.userDao = userDao;
@@ -44,20 +43,16 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     @Override
     @Transactional
     public Order insert(Order order) {
-        Optional<User> optionalUser = userDao.findById(order.getUser().getId());
-        if (optionalUser.isEmpty()) {
-            throw new NoSuchEntityException(USER_NOT_FOUND);
-        }
-        order.setUser(optionalUser.get());
-
-        Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(order.getGiftCertificate().getId());
-        if (optionalGiftCertificate.isEmpty()) {
-            throw new NoSuchEntityException(GIFT_CERTIFICATE_NOT_FOUND);
-        }
-        order.setGiftCertificate(optionalGiftCertificate.get());
-        order.setPrice(optionalGiftCertificate.get().getPrice());
+        User user = userDao.findById(order.getUser().getId())
+                .orElseThrow(() -> new NoSuchEntityException(USER_NOT_FOUND));
+        GiftCertificate giftCertificate = giftCertificateDao.findById(order.getGiftCertificate().getId())
+                .orElseThrow(() -> new NoSuchEntityException(GIFT_CERTIFICATE_NOT_FOUND));
+        order.setUser(user);
+        order.setGiftCertificate(giftCertificate);
+        order.setPrice(giftCertificate.getPrice());
         return dao.insert(order);
     }
+
 
     @Override
     public Order update(long id, Order entity) {
@@ -77,7 +72,6 @@ public class OrderServiceImpl extends AbstractService<Order> implements OrderSer
     @Override
     public List<Order> getOrdersByUserId(long userId, int page, int size) {
         Pageable pageRequest = createPageRequest(page, size);
-
         return orderDao.findByUserId(userId, pageRequest);
     }
 }

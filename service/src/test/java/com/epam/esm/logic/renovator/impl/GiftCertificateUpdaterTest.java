@@ -30,8 +30,6 @@ class GiftCertificateUpdaterTest {
             "newGiftCertificate", new BigDecimal("10.115"), 2, LocalDateTime.parse("2020-08-29T06:12:15.156"),
             UPDATED_DATE, Arrays.asList(new Tag(1, "tagName1"),
             new Tag(2, "tagName2")));
-    @Mock
-    private DateHandler dateHandler = Mockito.mock(DateHandler.class);
     @InjectMocks
     private GiftCertificateUpdater renovator;
 

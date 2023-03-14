@@ -1,5 +1,4 @@
 package com.epam.esm.controller;
-
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.Tag;
@@ -10,92 +9,85 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tags")
+@RequestMapping("/api/tags")
 public class TagController {
+
     private final TagService tagService;
     private final DtoConverter<Tag, TagDto> tagDtoConverter;
     private final TagHateoasAdder hateoasAdder;
 
-
     /**
-     * Method for getting tag by ID.
+     * Retrieve a tag by its ID.
      *
-     * @param id ID of tag to get
-     * @return Found tag entity with hateoas
+     * @param id the ID of the tag to retrieve
+     * @return the tag matching the given ID
      */
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TagDto tagById(@PathVariable("id") long id) {
-        Tag tag = tagService.getById(id);
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TagDto> getTag(@PathVariable long id) {
+        Tag tag = tagService.getById(id);
         TagDto tagDto = tagDtoConverter.convertToDto(tag);
         hateoasAdder.addLinks(tagDto);
-        return tagDto;
+        return ResponseEntity.ok(tagDto);
     }
-
     /**
-     * Method for removing tag by ID.
+     * Delete a tag by its ID.
      *
-     * @param id ID of tag to remove
-     * @return NO_CONTENT HttpStatus
+     * @param id the ID of the tag to delete
+     * @return a 204 No Content response
      */
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteTag(@PathVariable long id) {
         tagService.removeById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * Method for saving new tag.
+     * Create a new tag.
      *
-     * @param tag tag for saving
-     * @return created tag with hateoas
+     * @param tagDto the tag to create
+     * @return a 201 Created response with the created tag
      */
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TagDto createTag(@Valid @RequestBody TagDto tag) {
-        Tag addedTag = tagService.insert(tagDtoConverter.convertToEntity(tag));
-
-        TagDto tagDto = tagDtoConverter.convertToDto(addedTag);
-        hateoasAdder.addLinks(tagDto);
-        return tagDto;
+    public ResponseEntity<TagDto> createTag(@Valid @RequestBody TagDto tagDto) {
+        Tag tag = tagService.insert(tagDtoConverter.convertToEntity(tagDto));
+        TagDto createdTagDto = tagDtoConverter.convertToDto(tag);
+        hateoasAdder.addLinks(createdTagDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTagDto);
     }
-
     /**
-     * Method for getting list of tags from data source by special filter.
-     * If there are no filters, then it returns all tags.
+     * Search for tags based on the given parameters.
      *
-     * @param allRequestParams request parameters, which include the information needed for the search
-     * @return List of found tags with hateoas
+     * @param params a map of query parameters to search for tags
+     * @param page   the page number to retrieve (default: 0)
+     * @param size   the number of items per page (default: 5)
+     * @return a list of tags matching the given search parameters
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TagDto> tagsByParameter(@RequestParam MultiValueMap<String, String> allRequestParams, @RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
-        List<Tag> tags = tagService.search(allRequestParams, page, size);
-
-        return tags.stream().map(tagDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
+    public List<TagDto> searchTags(@RequestParam MultiValueMap<String, String> params,
+                                   @RequestParam(defaultValue = "0", required = false) int page,
+                                   @RequestParam(defaultValue = "5", required = false) int size) {
+        List<Tag> tags = tagService.search(params, page, size);
+        return tags.stream().map(tagDtoConverter::convertToDto)
+                .peek(hateoasAdder::addLinks).collect(Collectors.toList());
     }
 
-    /**
-     * Method for getting most popular tag if user with the highest cost of all orders.
-     *
-     * @return Found tag entity with hateoas
-     */
-    @GetMapping("/popular")
-    @ResponseStatus(HttpStatus.OK)
-    public TagDto mostPopularTagOfUserWithHighestCostOfAllOrders() {
+    @GetMapping("/popular-tag")
+    public ResponseEntity<TagDto> getMostPopularTagOfUserWithHighestCostOfAllOrders() {
         Tag tag = tagService.getMostPopularTagOfUserWithHighestCostOfAllOrders();
-
         TagDto tagDto = tagDtoConverter.convertToDto(tag);
         hateoasAdder.addLinks(tagDto);
-        return tagDto;
+        return ResponseEntity.ok(tagDto);
     }
 }

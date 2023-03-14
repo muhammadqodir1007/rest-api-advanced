@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 import static com.epam.esm.exception.ExceptionMessageKey.TAG_NOT_FOUND;
 
@@ -31,11 +31,9 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Override
     public Tag insert(Tag tag) {
         String tagName = tag.getName();
-        tagDao.findByName(tagName);
-        boolean isTagExist = tagDao.findByName(tagName).isPresent();
-        if (isTagExist) {
+        tagDao.findByName(tagName).ifPresent(tag1 -> {
             throw new DuplicateEntityException(ExceptionMessageKey.TAG_EXIST);
-        }
+        });
         return dao.insert(tag);
     }
 
@@ -47,16 +45,13 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Override
     @Transactional
     public void removeById(long id) {
-
-        Optional<Tag> foundEntity = tagDao.findById(id);
-        tagDao.removeById(id);
-        if (foundEntity.isEmpty()) {
-            throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
-        }
+        tagDao.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
 
         tagDao.removeGiftCertificateHasTag(id);
         tagDao.removeById(id);
     }
+
 
     @Override
     public List<Tag> search(MultiValueMap<String, String> requestParams, int page, int size) {
@@ -67,10 +62,9 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     public Tag getMostPopularTagOfUserWithHighestCostOfAllOrders() {
-        Optional<Tag> optionalTag = tagDao.findMostPopularTagOfUserWithHighestCostOfAllOrders();
-        if (optionalTag.isEmpty()) {
+
+        return tagDao.findMostPopularTagOfUserWithHighestCostOfAllOrders().orElseThrow(() -> {
             throw new NoSuchEntityException(TAG_NOT_FOUND);
-        }
-        return optionalTag.get();
+        });
     }
 }

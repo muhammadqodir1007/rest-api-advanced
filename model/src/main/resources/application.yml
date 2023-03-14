@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rest_advanced
+    password: 1007
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+
+#  spring:
+#    liquibase:
+#      change-log: classpath*:db/master.yaml
+
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+
+
+
+server:
+  port: 8085
+#spring:
+#  profiles:
+#    active: dev

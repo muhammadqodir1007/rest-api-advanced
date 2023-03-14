@@ -16,10 +16,10 @@ public class GiftHateoasAdder implements HateoasAdder<GiftCertificateDto> {
 
     @Override
     public void addLinks(GiftCertificateDto giftCertificateDto) {
-        giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).giftCertificateById(giftCertificateDto.getId())).withSelfRel());
+        giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).getGiftCertificate(giftCertificateDto.getId())).withSelfRel());
         giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).updateGiftCertificate(giftCertificateDto.getId(), giftCertificateDto)).withRel("update"));
         giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).deleteGiftCertificate(giftCertificateDto.getId())).withRel("delete"));
         giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).createGiftCertificate(giftCertificateDto)).withRel("new"));
-        giftCertificateDto.getTags().forEach(tagDto -> tagDto.add(linkTo(methodOn(TAG_CONTROLLER).tagById(tagDto.getId())).withSelfRel()));
+        giftCertificateDto.getTags().forEach(tagDto -> tagDto.add(linkTo(methodOn(TAG_CONTROLLER).getTag(tagDto.getId())).withSelfRel()));
     }
 }

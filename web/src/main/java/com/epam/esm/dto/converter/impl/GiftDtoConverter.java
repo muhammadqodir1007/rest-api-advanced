@@ -11,7 +11,18 @@ public class GiftDtoConverter implements DtoConverter<GiftCertificate, GiftCerti
     @Override
     public GiftCertificate convertToEntity(GiftCertificateDto dto) {
         GiftCertificate giftCertificate = new GiftCertificate();
+        setGiftCertificateFields(giftCertificate, dto);
+        return giftCertificate;
+    }
 
+    @Override
+    public GiftCertificateDto convertToDto(GiftCertificate entity) {
+        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
+        setGiftCertificateDtoFields(giftCertificateDto, entity);
+        return giftCertificateDto;
+    }
+
+    private void setGiftCertificateFields(GiftCertificate giftCertificate, GiftCertificateDto dto) {
         giftCertificate.setId(dto.getId());
         giftCertificate.setName(dto.getName());
         giftCertificate.setDescription(dto.getDescription());
@@ -20,14 +31,9 @@ public class GiftDtoConverter implements DtoConverter<GiftCertificate, GiftCerti
         giftCertificate.setCreateDate(dto.getCreateDate());
         giftCertificate.setLastUpdateDate(dto.getLastUpdateDate());
         giftCertificate.setTags(dto.getTags());
-
-        return giftCertificate;
     }
 
-    @Override
-    public GiftCertificateDto convertToDto(GiftCertificate entity) {
-        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
-
+    private void setGiftCertificateDtoFields(GiftCertificateDto giftCertificateDto, GiftCertificate entity) {
         giftCertificateDto.setId(entity.getId());
         giftCertificateDto.setName(entity.getName());
         giftCertificateDto.setDescription(entity.getDescription());
@@ -36,7 +42,5 @@ public class GiftDtoConverter implements DtoConverter<GiftCertificate, GiftCerti
         giftCertificateDto.setCreateDate(entity.getCreateDate());
         giftCertificateDto.setLastUpdateDate(entity.getLastUpdateDate());
         giftCertificateDto.setTags(entity.getTags());
-
-        return giftCertificateDto;
     }
 }

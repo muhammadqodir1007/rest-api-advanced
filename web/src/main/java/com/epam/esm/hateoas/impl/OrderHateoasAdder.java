@@ -14,7 +14,7 @@ public class OrderHateoasAdder implements HateoasAdder<OrderDto> {
 
     @Override
     public void addLinks(OrderDto orderDto) {
-        orderDto.add(linkTo(methodOn(ORDER_CONTROLLER_CLASS).orderById(orderDto.getId())).withSelfRel());
+        orderDto.add(linkTo(methodOn(ORDER_CONTROLLER_CLASS).getOrderById(orderDto.getId())).withSelfRel());
         orderDto.add(linkTo(methodOn(ORDER_CONTROLLER_CLASS).createOrder(orderDto)).withRel("new"));
     }
 }

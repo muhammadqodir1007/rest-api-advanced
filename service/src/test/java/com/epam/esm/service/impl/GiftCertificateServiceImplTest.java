@@ -3,6 +3,8 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DuplicateEntityException;
+import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.renovator.impl.GiftCertificateUpdater;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,14 +25,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
 
     @Mock
-    private GiftCertificateDaoImpl giftCertificateDao = Mockito.mock(GiftCertificateDaoImpl.class);
+    private GiftCertificateDaoImpl giftCertificateDao;
 
     @Mock
     private GiftCertificateUpdater renovator = Mockito.mock(GiftCertificateUpdater.class);
@@ -57,22 +59,49 @@ class GiftCertificateServiceImplTest {
     @Test
     void shouldInsert() {
         when(giftCertificateDao.insert(any())).thenReturn(GIFT_CERTIFICATE_4);
-       // when(dateHandler.getCurrentDate()).thenReturn(LocalDateTime.now());
 
         GiftCertificate certificate = giftCertificateService.insert(new GiftCertificate("name", "description", BigDecimal.valueOf(34), 34));
 
         assertEquals(GIFT_CERTIFICATE_4.getName(), certificate.getName());
     }
 
+
     @Test
-    void testGetById() {
+    public void shouldThrowException() {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName("Existing Gift Certificate");
+        giftCertificate.setDescription("This is an existing gift certificate");
+        GiftCertificate existingGiftCertificate = new GiftCertificate();
+        existingGiftCertificate.setId(1L);
+        existingGiftCertificate.setName("Existing Gift Certificate");
+        existingGiftCertificate.setDescription("This is an existing gift certificate");
+        when(giftCertificateDao.findByName(anyString())).thenReturn(Optional.of(existingGiftCertificate));
+        assertThrows(DuplicateEntityException.class, () -> {
+            giftCertificateService.insert(giftCertificate);
+        });
+
+    }
+
+    @Test
+    void shouldGetById() {
         when(giftCertificateDao.findById(GIFT_CERTIFICATE_2.getId())).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
         GiftCertificate actual = giftCertificateService.getById(GIFT_CERTIFICATE_2.getId());
         assertEquals(GIFT_CERTIFICATE_2, actual);
     }
 
     @Test
-    void testGetAll() {
+    public void shouldThrowExceptionWhenFindById() {
+        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
+        long invalidId = 1L;
+        assertThrows(NoSuchEntityException.class, () -> {
+            giftCertificateService.getById(invalidId);
+        });
+        verify(giftCertificateDao, times(1)).findById(eq(invalidId));
+    }
+
+
+    @Test
+    void shouldGetAll() {
         List<GiftCertificate> giftCertificates = Arrays.asList(GIFT_CERTIFICATE_1, GIFT_CERTIFICATE_2, GIFT_CERTIFICATE_3);
         Pageable pageRequest = PageRequest.of(PAGE, SIZE);
         when(giftCertificateDao.findAll(pageRequest)).thenReturn(giftCertificates);
@@ -82,7 +111,7 @@ class GiftCertificateServiceImplTest {
 
 
     @Test
-    void testUpdate() {
+    void shouldUpdate() {
         when(renovator.updateObject(GIFT_CERTIFICATE_3, GIFT_CERTIFICATE_3)).thenReturn(GIFT_CERTIFICATE_3);
         when(giftCertificateDao.findById(GIFT_CERTIFICATE_3.getId())).thenReturn(Optional.of(GIFT_CERTIFICATE_3));
         when(giftCertificateDao.update(GIFT_CERTIFICATE_3)).thenReturn(GIFT_CERTIFICATE_3);
@@ -91,14 +120,61 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void testDoFilter() {
+    public void shouldNotUpdateWithInvalidId() {
+        long id = 1L;
+        GiftCertificate giftCertificate = new GiftCertificate();
+        when(giftCertificateDao.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchEntityException.class, () -> giftCertificateService.update(id, giftCertificate));
+    }
+
+    @Test
+    public void shouldNotUpdateWithDuplicateName() {
+        long id = 1L;
+        String giftCertificateName = "gift certificate";
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName(giftCertificateName);
+        GiftCertificate oldGiftCertificate = new GiftCertificate();
+        oldGiftCertificate.setName("old gift certificate");
+        when(giftCertificateDao.findById(id)).thenReturn(Optional.of(oldGiftCertificate));
+        when(giftCertificateDao.findByName(giftCertificateName)).thenReturn(Optional.of(giftCertificate));
+
+        assertThrows(DuplicateEntityException.class, () -> giftCertificateService.update(id, giftCertificate));
+
+    }
+
+    @Test
+    void shouldSearch() {
         List<GiftCertificate> giftCertificates = Arrays.asList(GIFT_CERTIFICATE_2, GIFT_CERTIFICATE_1);
         MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("tag_name", TAG_2.getName());
+        requestParams.add("tagName", TAG_2.getName());
         requestParams.add("sortByName", SORT_PARAMETER);
         Pageable pageRequest = PageRequest.of(PAGE, SIZE);
         when(giftCertificateDao.search(requestParams, pageRequest)).thenReturn(giftCertificates);
         List<GiftCertificate> actual = giftCertificateService.search(requestParams, PAGE, SIZE);
         assertEquals(giftCertificates, actual);
     }
+
+    @Test
+    public void shouldRemoveById() {
+        long id = 1L;
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setId(id);
+        when(giftCertificateDao.findById(id)).thenReturn(Optional.of(giftCertificate));
+        giftCertificateService.removeById(id);
+        verify(giftCertificateDao).findById(id);
+        verify(giftCertificateDao).removeGiftCertificateHasTag(id);
+        verify(giftCertificateDao).removeById(id);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenRemovingById() {
+        long id = 1L;
+        when(giftCertificateDao.findById(id)).thenReturn(Optional.empty());
+        assertThrows(NoSuchEntityException.class, () -> giftCertificateService.removeById(id));
+        verify(giftCertificateDao).findById(id);
+        verifyNoMoreInteractions(giftCertificateDao);
+    }
+
+
 }

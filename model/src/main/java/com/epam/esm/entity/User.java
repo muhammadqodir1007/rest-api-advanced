@@ -1,16 +1,11 @@
 package com.epam.esm.entity;
 
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +15,9 @@ import java.util.Objects;
 @Setter
 @RequiredArgsConstructor
 @Table(name = "users")
-public class User extends Identifiable {
+public class User {
+    @Id
+    private long id;
 
     @Column(name = "name")
 
@@ -30,7 +27,7 @@ public class User extends Identifiable {
     private List<Order> orders = new ArrayList<>();
 
     public User(long id, String name) {
-        super(id);
+        this.id = id;
         this.name = name;
     }
 
@@ -38,26 +35,47 @@ public class User extends Identifiable {
         this.name = name;
     }
 
-    @Override
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        if (!super.equals(o)) return false;
+//        User that = (User) o;
+//        return Objects.equals(name, that.name) && super.equals(that);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(this.hashCode(), name);
+//    }
+//
+//    @Override
+//    public String toString() {
+//        final StringBuilder result = new StringBuilder("User{");
+//        result.append("id=").append(this.getId());
+//        result.append(", name='").append(name).append('\'');
+//        result.append('}');
+//        return result.toString();
+//    }
+
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        User that = (User) o;
-        return Objects.equals(name, that.name) && super.equals(that);
+        User user = (User) o;
+        return Objects.equals(id, user.id);
     }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name);
+        return getClass().hashCode();
     }
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder("User{");
-        result.append("id=").append(super.getId());
-        result.append(", name='").append(name).append('\'');
-        result.append('}');
-        return result.toString();
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "name = " + name + ")";
     }
 }

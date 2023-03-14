@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -21,30 +21,37 @@ public class UserController {
     private final UserHateoasAdder hateoasAdder;
 
     /**
-     * Method for getting all users from data source.
+     * Get a list of all users with HATEOAS links.
      *
-     * @param page the number of page for pagination
-     * @param size the size of page for pagination
-     * @return List of found users with hateoas
+     * @param pageNumber the page number for pagination
+     * @param pageSize   the number of users to return per page
+     * @return a list of UserDto objects with HATEOAS links
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> allUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
-        List<User> users = userService.getAll(page, size);
+    public List<UserDto> getAllUsers(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "5") int pageSize
+    ) {
+        List<User> users = userService.getAll(pageNumber, pageSize);
+        List<UserDto> userDtos = users.stream()
+                .map(userDtoConverter::convertToDto)
+                .collect(Collectors.toList());
 
-        return users.stream().map(userDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
+        userDtos.forEach(hateoasAdder::addLinks);
+        return userDtos;
     }
 
     /**
-     * Method for getting user by ID.
+     * Get a user by ID with HATEOAS links.
      *
-     * @param id ID of user to get
-     * @return Found user entity with hateoas
+     * @param userId the ID of the user to retrieve
+     * @return a UserDto object with HATEOAS links
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto userById(@PathVariable long id) {
-        User user = userService.getById(id);
+    public UserDto getUserById(@PathVariable("userId") long userId) {
+        User user = userService.getById(userId);
         UserDto userDto = userDtoConverter.convertToDto(user);
         hateoasAdder.addLinks(userDto);
         return userDto;

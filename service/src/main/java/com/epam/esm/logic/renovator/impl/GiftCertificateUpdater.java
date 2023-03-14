@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class GiftCertificateUpdater implements Updater<GiftCertificate> {
@@ -15,17 +14,17 @@ public class GiftCertificateUpdater implements Updater<GiftCertificate> {
     @Override
     public GiftCertificate updateObject(GiftCertificate newGiftCertificate, GiftCertificate oldGiftCertificate) {
         String name = newGiftCertificate.getName();
-        if (!Objects.isNull(name)) {
+        if (name != null) {
             oldGiftCertificate.setName(name);
         }
 
         String description = newGiftCertificate.getDescription();
-        if (!Objects.isNull(description)) {
+        if (description != null) {
             oldGiftCertificate.setDescription(description);
         }
 
         BigDecimal price = newGiftCertificate.getPrice();
-        if (!Objects.isNull(price)) {
+        if (price != null) {
             oldGiftCertificate.setPrice(price);
         }
 
@@ -35,7 +34,7 @@ public class GiftCertificateUpdater implements Updater<GiftCertificate> {
         }
 
         List<Tag> tags = newGiftCertificate.getTags();
-        if (!Objects.isNull(tags)) {
+        if (tags != null) {
             oldGiftCertificate.setTags(tags);
         }
 

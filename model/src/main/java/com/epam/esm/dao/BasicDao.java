@@ -1,11 +1,12 @@
 package com.epam.esm.dao;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public interface BasicDao<T> {
 
     /**

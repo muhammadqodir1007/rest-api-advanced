@@ -25,16 +25,19 @@ public class TagUpdater implements Updater<Tag> {
     @Override
     public List<Tag> updateListFromDatabase(List<Tag> newListOfTags) {
         List<Tag> tagsToPersist = new ArrayList<>();
-        if (newListOfTags != null) {
-            for (Tag tag : newListOfTags) {
-                Optional<Tag> tagOptional = tagDao.findByName(tag.getName());
-                if (tagOptional.isPresent()) {
-                    tagsToPersist.add(tagOptional.get());
-                } else {
-                    tagsToPersist.add(tag);
-                }
-            }
+        if (newListOfTags == null) {
+            return tagsToPersist;
         }
+
+        for (Tag tag : newListOfTags) {
+            Optional<Tag> tagOptional = tagDao.findByName(tag.getName());
+            tagOptional.ifPresentOrElse(
+                    tagsToPersist::add,
+                    () -> tagsToPersist.add(tag)
+            );
+        }
+
         return tagsToPersist;
     }
+
 }

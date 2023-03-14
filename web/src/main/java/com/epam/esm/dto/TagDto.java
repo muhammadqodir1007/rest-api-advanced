@@ -1,5 +1,7 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.validation.number.ValidPrice;
+import com.epam.esm.validation.text.ValidName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,5 +14,6 @@ import org.springframework.hateoas.RepresentationModel;
 public class TagDto extends RepresentationModel<TagDto> {
 
     private long id;
+    @ValidName
     private String name;
 }

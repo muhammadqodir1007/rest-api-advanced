@@ -7,10 +7,13 @@ import com.epam.esm.exception.IncorrectParameterException;
 import com.epam.esm.exception.NoSuchEntityException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Optional;
+
+@Service
 public abstract class AbstractService<T> implements CRUDService<T> {
     protected final BasicDao<T> dao;
 
@@ -18,48 +21,37 @@ public abstract class AbstractService<T> implements CRUDService<T> {
         this.dao = dao;
     }
 
-    @Override
     public T getById(long id) {
         Optional<T> optionalEntity = dao.findById(id);
-        if (optionalEntity.isEmpty()) {
-            throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
-        }
-
-        return optionalEntity.get();
+        return optionalEntity.orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
     }
 
-    @Override
     public List<T> getAll(int page, int size) {
         Pageable pageRequest = createPageRequest(page, size);
         return dao.findAll(pageRequest);
     }
 
-    @Override
     public void removeById(long id) {
-        Optional<T> foundEntity = dao.findById(id);
-        if (foundEntity.isEmpty()) {
+
+        dao.findById(id).orElseThrow(() -> {
+
             throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
-        }
+        });
+
         dao.removeById(id);
     }
 
     protected String getSingleRequestParameter(MultiValueMap<String, String> requestParams, String parameter) {
-        if (requestParams.containsKey(parameter)) {
-            return requestParams.get(parameter).get(0);
-        } else {
-            return null;
-        }
+        return requestParams.getFirst(parameter);
     }
 
     protected Pageable createPageRequest(int page, int size) {
-        Pageable pageRequest;
         try {
-            pageRequest = PageRequest.of(page, size);
+            return PageRequest.of(page, size);
         } catch (IllegalArgumentException e) {
             ExceptionResult exceptionResult = new ExceptionResult();
             exceptionResult.addException(ExceptionMessageKey.INVALID_PAGINATION, page, size);
             throw new IncorrectParameterException(exceptionResult);
         }
-        return pageRequest;
     }
 }

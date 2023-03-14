@@ -16,10 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class  UserServiceImplTest {
+class UserServiceImplTest {
 
     @Mock
     private UserDaoImpl userDao = Mockito.mock(UserDaoImpl.class);
@@ -53,4 +54,50 @@ class  UserServiceImplTest {
 
         assertEquals(users, actual);
     }
+
+
+    @Test
+    public void shouldUpdate() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.update(1L, new User()));
+    }
+
+    @Test
+    public void shouldInsert() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.insert(new User()));
+    }
+
+    @Test
+    public void shouldRemoveById() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.removeById(1L));
+    }
+
+    @Test
+    public void shouldSearch() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.search(null, 0, 10));
+    }
+
+    @Test
+    public void shouldNotUpdate() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.update(1L, new User()));
+    }
+
+    @Test
+    public void shouldNotInsert() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.insert(new User()));
+    }
+
+    @Test
+    public void shouldNotRemove() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.removeById(1L));
+    }
+
+    @Test
+    public void shouldNotSearch() {
+        assertThrows(UnsupportedOperationException.class, () -> userService.search(null, 0, 10));
+    }
 }
+
+
+
+
+

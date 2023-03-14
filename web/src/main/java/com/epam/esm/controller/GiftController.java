@@ -1,5 +1,4 @@
 package com.epam.esm.controller;
-
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.GiftCertificate;
@@ -10,97 +9,96 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/certificates")
+@RequestMapping("/api/certificates")
 public class GiftController {
-    private final GiftCertificateService giftCertificateService;
 
+    private final GiftCertificateService giftCertificateService;
     private final DtoConverter<GiftCertificate, GiftCertificateDto> giftCertificateDtoConverter;
     private final GiftHateoasAdder hateoasAdder;
 
-
     /**
-     * Method for getting gift certificate by ID.
+     * Retrieves a gift certificate by its ID.
      *
-     * @param id ID of gift certificate to get
-     * @return Found gift certificate entity with hateoas
+     * @param id the ID of the gift certificate to retrieve
+     * @return the gift certificate with the specified ID
      */
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto giftCertificateById(@PathVariable long id) {
+    public GiftCertificateDto getGiftCertificate(@PathVariable long id) {
         GiftCertificate giftCertificate = giftCertificateService.getById(id);
-
         GiftCertificateDto giftCertificateDto = giftCertificateDtoConverter.convertToDto(giftCertificate);
         hateoasAdder.addLinks(giftCertificateDto);
         return giftCertificateDto;
     }
 
     /**
-     * Method for removing gift certificate by ID.
+     * Deletes a gift certificate by its ID.
      *
-     * @param id ID of gift certificate to remove
-     * @return NO_CONTENT HttpStatus
+     * @param id the ID of the gift certificate to delete
+     * @return a response entity with no content
      */
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteGiftCertificate(@PathVariable long id) {
         giftCertificateService.removeById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * Method for saving new gift certificate.
+     * Creates a new gift certificate.
      *
-     * @param giftCertificate gift certificate for saving
-     * @return created gift certificate with hateoas
+     * @param giftCertificate the gift certificate to create
+     * @return the created gift certificate
      */
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto createGiftCertificate(@Valid @RequestBody GiftCertificateDto giftCertificate) {
         GiftCertificate addedGiftCertificate = giftCertificateService.insert(giftCertificateDtoConverter.convertToEntity(giftCertificate));
-
         GiftCertificateDto giftCertificateDto = giftCertificateDtoConverter.convertToDto(addedGiftCertificate);
         hateoasAdder.addLinks(giftCertificateDto);
         return giftCertificateDto;
     }
 
     /**
-     * Method for updating tags from the gift certificate.
+     * Updates an existing gift certificate.
      *
-     * @param giftCertificate gift certificate entity, which include information to update
-     * @param id              ID of gift certificate
-     * @return updated gift certificate with hateoas
+     * @param id              the ID of the gift certificate to update
+     * @param giftCertificate the updated gift certificate
+     * @return the updated gift certificate
      */
-    @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto updateGiftCertificate(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificate) {
-        GiftCertificate updatedGiftCertificate = giftCertificateService.update(id, giftCertificateDtoConverter.convertToEntity(giftCertificate));
 
+    @PatchMapping("/{id}")
+    public GiftCertificateDto updateGiftCertificate(@Valid @PathVariable long id, @RequestBody GiftCertificateDto giftCertificate) {
+        GiftCertificate updatedGiftCertificate = giftCertificateService.update(id, giftCertificateDtoConverter.convertToEntity(giftCertificate));
         GiftCertificateDto giftCertificateDto = giftCertificateDtoConverter.convertToDto(updatedGiftCertificate);
         hateoasAdder.addLinks(giftCertificateDto);
         return giftCertificateDto;
     }
 
     /**
-     * Method for getting list of gift certificates from data source by special filter.
-     * If there are no filters, then it returns all gift certificates.
+     * Retrieves a list of gift certificates based on the provided parameters.
      *
-     * @param page             the number of page for pagination
-     * @param size             the size of page for pagination
-     * @param allRequestParams request parameters, which include the information needed for the search
-     * @return List of found gift certificates with hateoas
+     * @param requestParams a map of search parameters
+     * @param page          the page number to retrieve (default: 0)
+     * @param size          the number of items per page (default: 5)
+     * @return a list of gift certificates that match the search parameters
      */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<GiftCertificateDto> giftCertificatesByParameter(@RequestParam MultiValueMap<String, String> allRequestParams, @RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
-        List<GiftCertificate> giftCertificates = giftCertificateService.search(allRequestParams, page, size);
-
-        return giftCertificates.stream().map(giftCertificateDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
+    public List<GiftCertificateDto> getGiftCertificates(@RequestParam MultiValueMap<String, String> requestParams,
+                                                        @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+                                                        @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
+        List<GiftCertificate> giftCertificates = giftCertificateService.search(requestParams, page, size);
+        List<GiftCertificateDto> giftCertificateDtos = giftCertificates.stream()
+                .map(giftCertificateDtoConverter::convertToDto)
+                .peek(hateoasAdder::addLinks)
+                .collect(Collectors.toList());
+        return giftCertificateDtos;
     }
 }

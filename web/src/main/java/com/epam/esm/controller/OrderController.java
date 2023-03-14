@@ -1,3 +1,6 @@
+/**
+ * The OrderController class provides REST endpoints for handling orders.
+ */
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.OrderDto;
@@ -7,6 +10,7 @@ import com.epam.esm.hateoas.impl.OrderHateoasAdder;
 import com.epam.esm.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,60 +19,59 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderController {
+
     private final OrderService orderService;
-
     private final DtoConverter<Order, OrderDto> orderDtoConverter;
-
     private final OrderHateoasAdder hateoasAdder;
 
-
     /**
-     * Method for getting order by ID.
+     * Get an order by its ID
      *
-     * @param id ID of order to get
-     * @return Found order entity with hateoas
+     * @param id The ID of the order to retrieve
+     * @return A response containing the retrieved order and its HATEOAS links
      */
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public OrderDto orderById(@PathVariable("id") long id) {
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable("id") long id) {
         Order order = orderService.getById(id);
-
         OrderDto orderDto = orderDtoConverter.convertToDto(order);
         hateoasAdder.addLinks(orderDto);
-        return orderDto;
+        return ResponseEntity.ok(orderDto);
     }
 
     /**
-     * Method for saving new order.
+     * Create a new order
      *
-     * @param order order for saving
-     * @return created order with hateoas
+     * @param orderDto The DTO of the order to create
+     * @return A response containing the created order and its HATEOAS links
      */
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto createOrder(@Valid @RequestBody OrderDto order) {
-        Order addedOrder = orderService.insert(orderDtoConverter.convertToEntity(order));
-
-        OrderDto orderDto = orderDtoConverter.convertToDto(addedOrder);
-        hateoasAdder.addLinks(orderDto);
-        return orderDto;
+    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderDto orderDto) {
+        Order order = orderService.insert(orderDtoConverter.convertToEntity(orderDto));
+        OrderDto addedOrderDto = orderDtoConverter.convertToDto(order);
+        hateoasAdder.addLinks(addedOrderDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedOrderDto);
     }
 
     /**
-     * Method for getting orders by user ID.
+     * Get a list of orders by user ID
      *
-     * @param userId ID of user
-     * @param page   the number of page for pagination
-     * @param size   the size of page for pagination
-     * @return Found list of orders with hateoas
+     * @param userId The ID of the user to retrieve orders for
+     * @param page The page number of results to retrieve (default 0)
+     * @param size The number of results to retrieve per page (default 5)
+     * @return A response containing a list of orders and their HATEOAS links
      */
     @GetMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> ordersByUserId(@PathVariable long userId, @RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "5", required = false) int size) {
+    public ResponseEntity<List<OrderDto>> getOrdersByUserId(
+            @PathVariable long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
         List<Order> orders = orderService.getOrdersByUserId(userId, page, size);
-
-        return orders.stream().map(orderDtoConverter::convertToDto).peek(hateoasAdder::addLinks).collect(Collectors.toList());
+        List<OrderDto> orderDtos = orders.stream()
+                .map(orderDtoConverter::convertToDto)
+                .peek(hateoasAdder::addLinks)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(orderDtos);
     }
 }

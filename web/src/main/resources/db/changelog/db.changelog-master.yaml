@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: my_idx
+      author: postgres
+      validCheckSum: any
+      runAlways: true
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: idx/clear.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false
+            endDelimiter: \nGO

@@ -4,55 +4,61 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
+/**
+ * A generic CRUD service interface for managing entities.
+ *
+ * @param <T> the type of entity this service manages
+ */
 public interface CRUDService<T> {
 
     /**
-     * Method for getting an entity object by ID.
+     * Retrieves an entity object by ID.
      *
-     * @param id ID of entity to get
-     * @return Entity object
+     * @param id ID of the entity to retrieve
+     * @return the entity object
      */
     T getById(long id);
 
     /**
-     * Method for getting all entities.
+     * Retrieves all entities.
      *
-     * @param page page number for pagination
-     * @param size page size for pagination
-     * @return List of all entities
+     * @param page the page number for pagination
+     * @param size the page size for pagination
+     * @return a list of all entities
      */
     List<T> getAll(int page, int size);
 
     /**
-     * Method for saving an entity.
+     * Saves an entity.
      *
-     * @param entity entity to save
-     * @return saved entity
+     * @param entity the entity to save
+     * @return the saved entity
      */
     T insert(T entity);
+
     /**
-     * Method for updating an entity.
+     * Updates an entity by ID.
      *
-     * @param id     ID of entity to update
-     * @param entity entity, which include information to update
-     * @return updated entity
+     * @param id the ID of the entity to update
+     * @param entity the entity information to update
+     * @return the updated entity
      */
     T update(long id, T entity);
 
     /**
-     * Method for removing an entity by ID.
+     * Removes an entity by ID.
      *
-     * @param id ID of entity to remove
+     * @param id the ID of the entity to remove
      */
     void removeById(long id);
 
     /**
-     * Method for getting a list of gift certificates by specific parameters.
+     * Searches for a list of entities by specific parameters.
      *
-     * @param requestParams request parameters from url
-     * @param page          page number for pagination
-     * @param size          page size for pagination
-     * @return List of gift certificates
+     * @param requestParams the request parameters from the URL
+     * @param page the page number for pagination
+     * @param size the page size for pagination
+     * @return a list of entities matching the search criteria
      */
     List<T> search(MultiValueMap<String, String> requestParams, int page, int size);
 }

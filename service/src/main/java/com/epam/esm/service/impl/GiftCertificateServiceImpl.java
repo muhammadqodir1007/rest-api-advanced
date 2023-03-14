@@ -16,8 +16,9 @@ import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate> implements GiftCertificateService {
@@ -47,7 +48,6 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
         removeDuplicateTags(giftCertificate);
         List<Tag> tagsToPersist = tagUpdater.updateListFromDatabase(giftCertificate.getTags());
         giftCertificate.setTags(tagsToPersist);
-
         return dao.insert(giftCertificate);
     }
 
@@ -55,12 +55,8 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     @Transactional
     public void removeById(long id) {
 
-        Optional<GiftCertificate> foundGiftCertificate = giftCertificateDao.findById(id);
-
-        if (foundGiftCertificate.isEmpty()) {
-            throw new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY);
-        }
-
+        giftCertificateDao.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
         giftCertificateDao.removeGiftCertificateHasTag(id);
         giftCertificateDao.removeById(id);
     }
@@ -83,6 +79,8 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     }
 
 
+
+
     @Override
     public List<GiftCertificate> search(MultiValueMap<String, String> requestParams, int page, int size) {
         Pageable pageRequest = createPageRequest(page, size);
@@ -92,13 +90,10 @@ public class GiftCertificateServiceImpl extends AbstractService<GiftCertificate>
     private void removeDuplicateTags(GiftCertificate giftCertificate) {
         List<Tag> tags = giftCertificate.getTags();
         if (tags != null) {
-            List<Tag> result = new ArrayList<>();
-            for (Tag tag : tags) {
-                if (!result.contains(tag)) {
-                    result.add(tag);
-                }
-            }
-            giftCertificate.setTags(result);
+            Set<Tag> uniqueTags = new HashSet<>(tags);
+            giftCertificate.setTags(new ArrayList<>(uniqueTags));
         }
     }
+
 }
+

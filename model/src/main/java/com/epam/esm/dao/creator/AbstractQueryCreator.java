@@ -12,74 +12,62 @@ import java.util.Objects;
 
 import static com.epam.esm.dao.creator.SearchParameters.*;
 
-
 public abstract class AbstractQueryCreator<T> implements QueryCreator<T> {
     private final String PERCENT = "%";
 
     protected List<Predicate> addName(MultiValueMap<String, String> fields, CriteriaBuilder criteriaBuilder, Root<T> root) {
         List<Predicate> restrictions = new ArrayList<>();
 
-        String name = getSingleMultiValueMapParameter(fields, NAME);
+        String name = getSingleParameter(fields, NAME);
         if (name != null) {
             restrictions.add(criteriaBuilder.equal(root.get(NAME), name));
         }
+
         return restrictions;
     }
 
     protected List<Predicate> addPartOfName(MultiValueMap<String, String> fields, CriteriaBuilder criteriaBuilder, Root<T> root) {
         List<Predicate> restrictions = new ArrayList<>();
 
-        String partOfName = getSingleMultiValueMapParameter(fields, PART_OF_NAME);
+        String partOfName = getSingleParameter(fields, PART_OF_NAME);
         if (partOfName != null) {
             restrictions.add(criteriaBuilder.like(root.get(NAME), PERCENT + partOfName + PERCENT));
         }
+
         return restrictions;
     }
 
     protected List<Predicate> addPartOfDescription(MultiValueMap<String, String> fields, CriteriaBuilder criteriaBuilder, Root<T> root) {
         List<Predicate> restrictions = new ArrayList<>();
 
-        String partOfDescription = getSingleMultiValueMapParameter(fields, PART_OF_DESCRIPTION);
+        String partOfDescription = getSingleParameter(fields, PART_OF_DESCRIPTION);
         if (partOfDescription != null) {
-            String DESCRIPTION = "description";
-            restrictions.add(criteriaBuilder.like(root.get(DESCRIPTION), PERCENT + partOfDescription + PERCENT));
+            restrictions.add(criteriaBuilder.like(root.get("description"), PERCENT + partOfDescription + PERCENT));
         }
+
         return restrictions;
     }
 
     protected void addSortByName(MultiValueMap<String, String> fields, CriteriaBuilder criteriaBuilder,
                                  CriteriaQuery<T> criteriaQuery, Root<T> root) {
-
-        String sortType = getSingleMultiValueMapParameter(fields, SORT_BY_NAME);
+        String sortType = getSingleParameter(fields, SORT_BY_NAME);
         if (sortType != null) {
-            if (Objects.equals(sortType, SortType.DESC.getSortTypeName())) {
-                criteriaQuery.orderBy(criteriaBuilder.desc(root.get(NAME)));
-            }
-            if (Objects.equals(sortType, SortType.ASC.getSortTypeName())) {
-                criteriaQuery.orderBy(criteriaBuilder.asc(root.get(NAME)));
-            }
+            criteriaQuery.orderBy(Objects.equals(sortType, SortType.DESC.getSortTypeName()) ?
+                    criteriaBuilder.desc(root.get(NAME)) : criteriaBuilder.asc(root.get(NAME)));
         }
     }
 
     protected void addSortByCreateDate(MultiValueMap<String, String> fields, CriteriaBuilder criteriaBuilder,
                                        CriteriaQuery<T> criteriaQuery, Root<T> root) {
-        String sortType = getSingleMultiValueMapParameter(fields, SORT_BY_CREATE_DATE);
+        String sortType = getSingleParameter(fields, SORT_BY_CREATE_DATE);
         if (sortType != null) {
-            String CREATE_DATE = "createDate";
-            if (Objects.equals(sortType, SortType.DESC.getSortTypeName())) {
-                criteriaQuery.orderBy(criteriaBuilder.desc(root.get(CREATE_DATE)));
-            }
-            if (Objects.equals(sortType, SortType.ASC.getSortTypeName())) {
-                criteriaQuery.orderBy(criteriaBuilder.asc(root.get(CREATE_DATE)));
-            }
+            String createDate = "createDate";
+            criteriaQuery.orderBy(Objects.equals(sortType, SortType.DESC.getSortTypeName()) ?
+                    criteriaBuilder.desc(root.get(createDate)) : criteriaBuilder.asc(root.get(createDate)));
         }
     }
 
-    private String getSingleMultiValueMapParameter(MultiValueMap<String, String> fields, String parameter) {
-        if (fields.containsKey(parameter)) {
-            return fields.get(parameter).get(0);
-        } else {
-            return null;
-        }
+    private String getSingleParameter(MultiValueMap<String, String> fields, String parameter) {
+        return fields.getFirst(parameter);
     }
 }

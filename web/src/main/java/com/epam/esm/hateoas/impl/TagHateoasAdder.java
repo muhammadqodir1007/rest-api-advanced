@@ -14,7 +14,7 @@ public class TagHateoasAdder implements HateoasAdder<TagDto> {
 
     @Override
     public void addLinks(TagDto tagDto) {
-        tagDto.add(linkTo(methodOn(TAG_CONTROLLER_CLASS).tagById(tagDto.getId())).withSelfRel());
+        tagDto.add(linkTo(methodOn(TAG_CONTROLLER_CLASS).getTag(tagDto.getId())).withSelfRel());
         tagDto.add(linkTo(methodOn(TAG_CONTROLLER_CLASS).deleteTag(tagDto.getId())).withRel("delete"));
         tagDto.add(linkTo(methodOn(TAG_CONTROLLER_CLASS).createTag(tagDto)).withRel("new"));
     }
