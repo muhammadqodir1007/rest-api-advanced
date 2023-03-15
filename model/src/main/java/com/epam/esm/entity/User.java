@@ -36,29 +36,6 @@ public class User {
     }
 
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        if (!super.equals(o)) return false;
-//        User that = (User) o;
-//        return Objects.equals(name, that.name) && super.equals(that);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(this.hashCode(), name);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        final StringBuilder result = new StringBuilder("User{");
-//        result.append("id=").append(this.getId());
-//        result.append(", name='").append(name).append('\'');
-//        result.append('}');
-//        return result.toString();
-//    }
-
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

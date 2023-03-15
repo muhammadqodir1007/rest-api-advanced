@@ -1,4 +1,6 @@
 package com.epam.esm.controller;
+
+import com.epam.esm.config.MessageByLang;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.Tag;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +39,7 @@ public class TagController {
         hateoasAdder.addLinks(tagDto);
         return ResponseEntity.ok(tagDto);
     }
+
     /**
      * Delete a tag by its ID.
      *
@@ -45,9 +49,9 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteTag(@PathVariable long id) {
+    public ResponseEntity<String> deleteTag(@PathVariable long id) {
         tagService.removeById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body(MessageByLang.toLocale("successfully.deleted"));
     }
 
     /**
@@ -65,6 +69,7 @@ public class TagController {
         hateoasAdder.addLinks(createdTagDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTagDto);
     }
+
     /**
      * Search for tags based on the given parameters.
      *

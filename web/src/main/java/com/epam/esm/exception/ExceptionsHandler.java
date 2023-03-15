@@ -2,6 +2,7 @@ package com.epam.esm.exception;
 
 import com.epam.esm.config.MessageByLang;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -88,6 +89,11 @@ public class ExceptionsHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(ConstraintViolationException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("40001", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(PSQLException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(PSQLException ex) {
         ErrorResponse errorResponse = new ErrorResponse("40001", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

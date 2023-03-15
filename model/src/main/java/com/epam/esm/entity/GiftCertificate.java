@@ -24,21 +24,15 @@ public class GiftCertificate extends Identifiable {
 
     @Column(name = "name")
     @NotBlank(message = "Name is mandatory")
-    @Size(max = 45, min = 3)
     private String name;
 
     @Column(name = "description")
-    @Size(max = 300)
     private String description;
 
     @Column(name = "price")
-    @DecimalMin(value = "0.0")
-    @DecimalMax(value = "999999.99")
     private BigDecimal price;
 
     @Column(name = "duration")
-    @Min(value = 0)
-    @Max(value = 366)
     private int duration;
 
     @Column(name = "create_date")
@@ -55,7 +49,8 @@ public class GiftCertificate extends Identifiable {
     )
     private List<Tag> tags;
 
-    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, List<Tag> tags) {
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration,
+                           LocalDateTime createDate, LocalDateTime lastUpdateDate, List<Tag> tags) {
         super(id);
         this.name = name;
         this.description = description;

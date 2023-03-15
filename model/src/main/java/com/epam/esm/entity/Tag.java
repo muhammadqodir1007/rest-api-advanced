@@ -33,8 +33,6 @@ public class Tag extends Identifiable {
     }
 
     @Column(name = "name")
-    @NotBlank
-    @Size(min = 3, max = 45)
     private String name;
 
 

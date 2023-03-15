@@ -1,4 +1,6 @@
 package com.epam.esm.controller;
+
+import com.epam.esm.config.MessageByLang;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.entity.GiftCertificate;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,9 +48,9 @@ public class GiftController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteGiftCertificate(@PathVariable long id) {
+    public ResponseEntity<String> deleteGiftCertificate(@PathVariable long id) {
         giftCertificateService.removeById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body(MessageByLang.toLocale("successfully.deleted"));
     }
 
     /**

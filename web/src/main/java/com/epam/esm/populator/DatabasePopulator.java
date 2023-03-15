@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.Collections;
 
-//@Component
+@Component
 public class DatabasePopulator implements CommandLineRunner {
 
     private final GiftCertificateDao giftCertificateDao;

@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class SearchParameters {
     /**
-     * Filter options.
+     * Search options.
      */
     public static final String NAME = "name";
     public static final String TAG_NAME = "tagName";

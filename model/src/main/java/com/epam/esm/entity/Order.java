@@ -19,8 +19,6 @@ import java.util.Objects;
 public class Order extends Identifiable {
 
     @Column(name = "price")
-    @DecimalMin(value = "0.0")
-    @DecimalMax(value = "999999.99")
     private BigDecimal price;
 
     @Column(name = "purchase_time")
