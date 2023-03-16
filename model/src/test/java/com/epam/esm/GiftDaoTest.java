@@ -44,7 +44,6 @@ public class GiftDaoTest {
             "description1", BigDecimal.valueOf(34), 34, LocalDateTime.now(), LocalDateTime.now());
     private static final GiftCertificate GIFT_CERTIFICATE_4 = new GiftCertificate("name2",
             "description2", BigDecimal.valueOf(34), 34, LocalDateTime.now(), LocalDateTime.now());
-    private static final GiftCertificate GIFT_CERTIFICATE_2 = new GiftCertificate();
 
 
     @Test

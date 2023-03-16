@@ -13,7 +13,7 @@ import java.util.Objects;
 import static com.epam.esm.dao.creator.SearchParameters.*;
 
 public abstract class AbstractQueryCreator<T> implements QueryCreator<T> {
-    private final String PERCENT = "%";
+    private static final String PERCENT = "%";
 
     protected List<Predicate> addName(MultiValueMap<String, String> fields, CriteriaBuilder criteriaBuilder, Root<T> root) {
         List<Predicate> restrictions = new ArrayList<>();

@@ -1,9 +1,10 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.OrderDto;
 import com.epam.esm.entity.Order;
 
 import java.util.List;
-public interface OrderService extends CRUDService<Order> {
+public interface OrderService extends CRUDService<OrderDto> {
 
     /**
      * Method for getting list of {@link Order} from database by user ID.
@@ -13,5 +14,5 @@ public interface OrderService extends CRUDService<Order> {
      * @param size   page size for pagination
      * @return list of orders
      */
-    List<Order> getOrdersByUserId(long userId, int page, int size);
+    List<OrderDto> getOrdersByUserId(long userId, int page, int size);
 }

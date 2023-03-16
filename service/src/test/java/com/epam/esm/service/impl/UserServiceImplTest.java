@@ -1,103 +1,87 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.impl.UserDaoImpl;
+import com.epam.esm.dao.UserDao;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.converter.impl.UserDtoConverter;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.NoSuchEntityException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplTest {
-
+public class UserServiceImplTest {
     @Mock
-    private UserDaoImpl userDao = Mockito.mock(UserDaoImpl.class);
-
+    private UserDao userDao;
+    @Mock
+    private UserDtoConverter userDtoConverter;
     @InjectMocks
     private UserServiceImpl userService;
 
-    private static final User USER_1 = new User(1, "name1");
-    private static final User USER_2 = new User(2, "name2");
-    private static final User USER_3 = new User(3, "name3");
-
-    private static final int PAGE = 0;
-    private static final int SIZE = 5;
 
     @Test
-    public void testGetById() {
-        when(userDao.findById(USER_1.getId())).thenReturn(Optional.of(USER_1));
-
-        User actual = userService.getById(USER_1.getId());
-
-        assertEquals(USER_1, actual);
+    void shouldGetById() {
+        User user = new User(1, "name");
+        UserDto userDto = new UserDto(1, "name");
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userDtoConverter.convertToDto(any())).thenReturn(userDto);
+        UserDto actual = userService.getById(4);
+        assertEquals(userDto, actual);
     }
-
     @Test
-    public void testGetAll() {
-        List<User> users = Arrays.asList(USER_1, USER_2, USER_3);
-        Pageable pageRequest = PageRequest.of(PAGE, SIZE);
-        when(userDao.findAll(pageRequest)).thenReturn(users);
+    public void getByIdShouldThrowNoSuchEntityException() {
+        long id = 1L;
 
-        List<User> actual = userService.getAll(PAGE, SIZE);
+       when(userDao.findById(id)).thenReturn(Optional.empty());
 
-        assertEquals(users, actual);
+        assertThrows(NoSuchEntityException.class, () -> userService.getById(id));
     }
 
 
+
     @Test
-    public void shouldUpdate() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.update(1L, new User()));
+    void shouldGetAll() {
+        UserDto userDto = new UserDto(1, "name");
+        when(userDao.findAll(any())).thenReturn(Collections.singletonList(new User(1, "name")));
+        when(userDtoConverter.convertToDto(any())).thenReturn(userDto);
+        List<UserDto> actual = userService.getAll(0, 5);
+        assertEquals(Collections.singletonList(userDto),actual);
+
     }
 
     @Test
-    public void shouldInsert() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.insert(new User()));
+    void insertShouldThrowUnsupportedException(){
+        assertThrows(UnsupportedOperationException.class,()->userService.insert(new UserDto(1,"Cole")));
+    }
+    @Test
+    void updateShouldThrowUnsupportedException(){
+        assertThrows(UnsupportedOperationException.class,()->userService.update(1,new UserDto(1,"Cole")));
+    }
+    @Test
+    void removeShouldThrowUnsupportedException(){
+        assertThrows(UnsupportedOperationException.class,()->userService.removeById(1));
+    }
+    @Test
+    public void searchShouldThrowUnsupportedException() {
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("name", "John");
+        assertThrows(UnsupportedOperationException.class,()->userService.search(requestParams, 0, 10));
+
     }
 
-    @Test
-    public void shouldRemoveById() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.removeById(1L));
-    }
 
-    @Test
-    public void shouldSearch() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.search(null, 0, 10));
-    }
-
-    @Test
-    public void shouldNotUpdate() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.update(1L, new User()));
-    }
-
-    @Test
-    public void shouldNotInsert() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.insert(new User()));
-    }
-
-    @Test
-    public void shouldNotRemove() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.removeById(1L));
-    }
-
-    @Test
-    public void shouldNotSearch() {
-        assertThrows(UnsupportedOperationException.class, () -> userService.search(null, 0, 10));
-    }
 }
-
-
-
-
-

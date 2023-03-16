@@ -1,11 +1,11 @@
 package com.epam.esm.populator;
 
-import com.epam.esm.controller.OrderController;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
+import com.epam.esm.service.OrderService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +20,13 @@ public class DatabasePopulator implements CommandLineRunner {
 
     private final GiftCertificateDao giftCertificateDao;
 
-    private final OrderController orderController;
+    private final OrderService orderController;
 
     @PersistenceContext
     EntityManager entityManager;
 
 
-    public DatabasePopulator(GiftCertificateDao giftCertificateDao, OrderController orderController) {
+    public DatabasePopulator(GiftCertificateDao giftCertificateDao, OrderService orderController) {
         this.giftCertificateDao = giftCertificateDao;
         this.orderController = orderController;
     }
@@ -34,12 +34,12 @@ public class DatabasePopulator implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         for (int i = 1; i < 100; i++) {
             User user = new User();
             user.setId(i);
-            user.setName("name"+i);
+            user.setName("name" + i);
             entityManager.persist(user);
         }
 
@@ -59,7 +59,7 @@ public class DatabasePopulator implements CommandLineRunner {
             orderDto.setUserId(i);
             orderDto.setPrice(BigDecimal.valueOf(i * 10));
             orderDto.setGiftCertificateId(i);
-            orderController.createOrder(orderDto);
+            orderController.insert(orderDto);
 
         }
 

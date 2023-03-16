@@ -5,8 +5,6 @@ import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -19,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateUpdaterTest {
 
-    private static final LocalDateTime UPDATED_DATE = LocalDateTime.parse("2021-10-24T06:12:00.156");
+    private static final LocalDateTime UPDATED_DATE = LocalDateTime.parse("2020-08-29T06:12:15.156");
     private static final GiftCertificate OLD_GIFT_CERTIFICATE = new GiftCertificate(1, "giftCertificate",
             "description", new BigDecimal("10.115"), 1, LocalDateTime.parse("2020-08-29T06:12:15.156"),
             LocalDateTime.parse("2020-08-29T06:12:15.156"), Collections.singletonList(new Tag(1, "tagName1")));
@@ -35,7 +33,6 @@ class GiftCertificateUpdaterTest {
 
     @Test
     void testUpdateObject() {
-        //  when(dateHandler.getCurrentDate()).thenReturn(UPDATED_DATE);
         GiftCertificate actual = renovator.updateObject(NEW_GIFT_CERTIFICATE, OLD_GIFT_CERTIFICATE);
         assertEquals(UPDATED_GIFT_CERTIFICATE, actual);
     }

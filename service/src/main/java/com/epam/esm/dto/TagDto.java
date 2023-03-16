@@ -1,6 +1,5 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.validation.number.ValidPrice;
 import com.epam.esm.validation.text.ValidName;
 import lombok.AllArgsConstructor;
 import lombok.Data;

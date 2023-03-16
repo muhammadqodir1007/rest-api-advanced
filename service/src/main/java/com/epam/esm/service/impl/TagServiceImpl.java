@@ -1,70 +1,102 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.BasicDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.converter.impl.TagDtoConverter;
+import com.epam.esm.dto.response.ApiResponse;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DuplicateEntityException;
-import com.epam.esm.exception.ExceptionMessageKey;
-import com.epam.esm.exception.NoSuchEntityException;
-import com.epam.esm.service.AbstractService;
+import com.epam.esm.exception.*;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
 import javax.transaction.Transactional;
 import java.util.List;
-
-import static com.epam.esm.exception.ExceptionMessageKey.TAG_NOT_FOUND;
+import java.util.stream.Collectors;
 
 @Service
-public class TagServiceImpl extends AbstractService<Tag> implements TagService {
+public class TagServiceImpl implements TagService {
     private final TagDao tagDao;
+    private final TagDtoConverter tagDtoConverter;
 
     @Autowired
-    public TagServiceImpl(BasicDao<Tag> dao, TagDao tagDao) {
-        super(dao);
+    public TagServiceImpl(TagDao tagDao, TagDtoConverter tagDtoConverter) {
         this.tagDao = tagDao;
+        this.tagDtoConverter = tagDtoConverter;
     }
 
     @Override
-    public Tag insert(Tag tag) {
-        String tagName = tag.getName();
+    public TagDto getById(long id) {
+        Tag tag = tagDao.findById(id).orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
+        return tagDtoConverter.convertToDto(tag);
+    }
+
+    @Override
+    public List<TagDto> getAll(int page, int size) {
+        Pageable pageRequest = createPageRequest(page, size);
+
+        List<Tag> all = tagDao.findAll(pageRequest);
+
+        return all.stream().map(tagDtoConverter::convertToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public TagDto insert(TagDto tagDto) {
+        String tagName = tagDto.getName();
         tagDao.findByName(tagName).ifPresent(tag1 -> {
             throw new DuplicateEntityException(ExceptionMessageKey.TAG_EXIST);
         });
-        return dao.insert(tag);
+
+        Tag tag = tagDtoConverter.convertToEntity(tagDto);
+        Tag insert = tagDao.insert(tag);
+
+        return tagDtoConverter.convertToDto(insert);
     }
 
     @Override
-    public Tag update(long id, Tag entity) {
-        return tagDao.update(entity);
+    public TagDto update(long id, TagDto tagDto) {
+        Tag tag = tagDtoConverter.convertToEntity(tagDto);
+        Tag update = tagDao.update(tag);
+
+        return tagDtoConverter.convertToDto(update);
     }
 
     @Override
     @Transactional
-    public void removeById(long id) {
-        tagDao.findById(id)
-                .orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
-
+    public ApiResponse removeById(long id) {
         tagDao.removeGiftCertificateHasTag(id);
         tagDao.removeById(id);
+        return new ApiResponse(true,"deleted");
     }
 
-
     @Override
-    public List<Tag> search(MultiValueMap<String, String> requestParams, int page, int size) {
+    public List<TagDto> search(MultiValueMap<String, String> requestParams, int page, int size) {
         Pageable pageRequest = createPageRequest(page, size);
-        return tagDao.search(requestParams, pageRequest);
+
+        List<Tag> all = tagDao.search(requestParams, pageRequest);
+
+        return all.stream().map(tagDtoConverter::convertToDto).collect(Collectors.toList());
     }
 
-
     @Override
-    public Tag getMostPopularTagOfUserWithHighestCostOfAllOrders() {
-
-        return tagDao.findMostPopularTagOfUserWithHighestCostOfAllOrders().orElseThrow(() -> {
-            throw new NoSuchEntityException(TAG_NOT_FOUND);
+    public TagDto getMostPopularTagOfUserWithHighestCostOfAllOrders() {
+        Tag tag = tagDao.findMostPopularTagOfUserWithHighestCostOfAllOrders().orElseThrow(() -> {
+            throw new NoSuchEntityException(ExceptionMessageKey.TAG_NOT_FOUND);
         });
+
+        return tagDtoConverter.convertToDto(tag);
+    }
+
+    protected Pageable createPageRequest(int page, int size) {
+        try {
+            return PageRequest.of(page, size);
+        } catch (IllegalArgumentException e) {
+            ExceptionResult exceptionResult = new ExceptionResult();
+            exceptionResult.addException(ExceptionMessageKey.INVALID_PAGINATION, page, size);
+            throw new IncorrectParameterException(exceptionResult);
+        }
     }
 }

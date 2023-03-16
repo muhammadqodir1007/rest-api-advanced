@@ -30,6 +30,13 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(errorResponse, CONFLICT);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public final ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ILLEGAL_ARGUMENT.toString(), ex.getLocalizedMessage());
+        return new ResponseEntity<>(errorResponse, BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(NoSuchEntityException.class)
     public final ResponseEntity<Object> handleNoSuchEntityExceptions(NoSuchEntityException ex) {
         String details = MessageByLang.toLocale(ex.getLocalizedMessage());
@@ -92,6 +99,7 @@ public class ExceptionsHandler {
         ErrorResponse errorResponse = new ErrorResponse("40001", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(PSQLException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(PSQLException ex) {
         ErrorResponse errorResponse = new ErrorResponse("40001", ex.getMessage());

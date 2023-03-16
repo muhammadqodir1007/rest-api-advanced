@@ -18,7 +18,6 @@ public class ApplicationRunner {
      */
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(ApplicationRunner.class, args);
-
         DispatcherServlet dispatcherServlet = (DispatcherServlet) ctx.getBean("dispatcherServlet");
         dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
 

@@ -5,18 +5,19 @@ import com.epam.esm.validation.number.ValidPrice;
 import com.epam.esm.validation.text.ValidDescription;
 import com.epam.esm.validation.text.ValidName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
 
@@ -37,10 +38,13 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
 
     private List<Tag> tags;
 
-    public GiftCertificateDto(String name, String description, BigDecimal price, int duration) {
+    public GiftCertificateDto(long id, String name, String description, BigDecimal price, int duration, List<Tag> tags) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
+        this.tags=tags;
+
     }
 }

@@ -1,3 +1,5 @@
+
+
 package com.epam.esm.hateoas.impl;
 
 import com.epam.esm.controller.TagController;
@@ -11,7 +13,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class TagHateoasAdder implements HateoasAdder<TagDto> {
     private static final Class<TagController> TAG_CONTROLLER_CLASS = TagController.class;
-
     @Override
     public void addLinks(TagDto tagDto) {
         tagDto.add(linkTo(methodOn(TAG_CONTROLLER_CLASS).getTag(tagDto.getId())).withSelfRel());

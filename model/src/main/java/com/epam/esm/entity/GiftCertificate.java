@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,11 +61,13 @@ public class GiftCertificate extends Identifiable {
         this.tags = tags;
     }
 
-    public GiftCertificate(String name, String description, BigDecimal price, int duration) {
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, List<Tag> tags) {
+        super(id);
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
+        this.tags = tags;
     }
 
     public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
@@ -76,6 +78,17 @@ public class GiftCertificate extends Identifiable {
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
     }
+
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+        super(id);
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
 
     @PrePersist
     public void onPrePersist() {

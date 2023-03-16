@@ -1,7 +1,6 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.dao.creator.QueryCreator;
-import com.epam.esm.entity.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,7 @@ public abstract class AbstractDao<T> {
 
     protected abstract QueryCreator<T> getQueryCreator();
 
-    public AbstractDao(Class<T> entityType) {
+   protected AbstractDao(Class<T> entityType) {
         this.entityType = entityType;
     }
 

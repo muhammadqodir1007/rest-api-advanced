@@ -5,21 +5,10 @@ spring:
     username: postgres
     driver-class-name: org.postgresql.Driver
 
-#  spring:
-#    liquibase:
-#      change-log: classpath*:db/master.yaml
-
-
-
   jpa:
     hibernate:
       ddl-auto: create
 
 
-
-
 server:
-  port: 8085
-#spring:
-#  profiles:
-#    active: dev
+  port: 8087

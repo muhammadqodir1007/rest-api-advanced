@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.response.ApiResponse;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public interface CRUDService<T> {
     /**
      * Updates an entity by ID.
      *
-     * @param id the ID of the entity to update
+     * @param id     the ID of the entity to update
      * @param entity the entity information to update
      * @return the updated entity
      */
@@ -50,14 +51,14 @@ public interface CRUDService<T> {
      *
      * @param id the ID of the entity to remove
      */
-    void removeById(long id);
+    ApiResponse removeById(long id);
 
     /**
      * Searches for a list of entities by specific parameters.
      *
      * @param requestParams the request parameters from the URL
-     * @param page the page number for pagination
-     * @param size the page size for pagination
+     * @param page          the page number for pagination
+     * @param size          the page size for pagination
      * @return a list of entities matching the search criteria
      */
     List<T> search(MultiValueMap<String, String> requestParams, int page, int size);
