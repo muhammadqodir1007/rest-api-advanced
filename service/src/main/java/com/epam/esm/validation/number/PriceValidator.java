@@ -8,7 +8,6 @@ public class PriceValidator implements ConstraintValidator<ValidPrice, BigDecima
 
     @Override
     public boolean isValid(BigDecimal price, ConstraintValidatorContext constraintValidatorContext) {
-
-        return price.compareTo(BigDecimal.ZERO) > 0;
+        return !(price.signum() ==-1);
     }
 }

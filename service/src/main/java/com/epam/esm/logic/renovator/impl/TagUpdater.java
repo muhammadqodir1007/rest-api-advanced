@@ -19,7 +19,12 @@ public class TagUpdater implements Updater<Tag> {
 
     @Override
     public Tag updateObject(Tag newTag, Tag oldTag) {
-        throw new UnsupportedOperationException();
+
+        if (newTag.getName() != null) {
+            oldTag.setName(newTag.getName());
+        }
+        return oldTag;
+
     }
 
     @Override

@@ -9,5 +9,5 @@ public interface HateoasAdder<T extends RepresentationModel<T>> {
      *
      * @param entity entity to which links will be added
      */
-    void addLinks(T entity);
+    void addLinks(T entity) ;
 }

@@ -4,6 +4,7 @@ import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.impl.TagDtoConverter;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.logic.renovator.impl.TagUpdater;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +30,9 @@ class TagServiceImplTest {
     @Mock
 
     private TagDtoConverter tagDtoConverter;
+
+    @Mock
+    private TagUpdater updater;
     @InjectMocks
 
     private TagServiceImpl tagService;
@@ -35,7 +40,7 @@ class TagServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        tagService = new TagServiceImpl(tagDao, tagDtoConverter);
+        tagService = new TagServiceImpl(tagDao, tagDtoConverter, updater);
     }
 
     @Test
@@ -78,13 +83,22 @@ class TagServiceImplTest {
 
     @Test
     void shouldUpdate() {
+        long id = 1L;
         TagDto tagDto = new TagDto();
-        tagDto.setId(1L);
-        tagDto.setName("tag");
-        Tag tag = tagDtoConverter.convertToEntity(tagDto);
-        when(tagDao.update(tag)).thenReturn(tag);
-        TagDto result = tagService.update(1L, tagDto);
-        assertEquals(tagDtoConverter.convertToDto(tag), result);
+        Tag oldTag = new Tag();
+        Tag newTag = new Tag();
+
+        when(tagDao.findById(id)).thenReturn(Optional.of(oldTag));
+        when(tagDao.update(any(Tag.class))).thenReturn(newTag);
+
+        when(tagDtoConverter.convertToEntity(tagDto)).thenReturn(newTag);
+        when(tagDtoConverter.convertToDto(newTag)).thenReturn(tagDto);
+
+        when(updater.updateObject(newTag, oldTag)).thenReturn(newTag);
+
+        TagDto result = tagService.update(id, tagDto);
+
+        assertNotNull(result);
     }
 
     @Test

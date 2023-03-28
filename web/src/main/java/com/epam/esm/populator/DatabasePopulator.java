@@ -17,11 +17,8 @@ import java.util.Collections;
 
 @Component
 public class DatabasePopulator implements CommandLineRunner {
-
     private final GiftCertificateDao giftCertificateDao;
-
     private final OrderService orderController;
-
     @PersistenceContext
     EntityManager entityManager;
 
@@ -36,14 +33,15 @@ public class DatabasePopulator implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
 
-        for (int i = 1; i < 100; i++) {
+
+        for (int i = 1; i < 1000; i++) {
             User user = new User();
             user.setId(i);
             user.setName("name" + i);
             entityManager.persist(user);
         }
 
-        for (int i = 1; i < 1000; i++) {
+        for (int i = 1; i < 10000; i++) {
             GiftCertificate giftCertificate = new GiftCertificate();
             giftCertificate.setName("gift" + i);
             giftCertificate.setDescription("description" + i);
@@ -54,7 +52,7 @@ public class DatabasePopulator implements CommandLineRunner {
         }
 
 
-        for (int i = 1; i < 100; i++) {
+        for (int i = 1; i < 1000; i++) {
             OrderDto orderDto = new OrderDto();
             orderDto.setUserId(i);
             orderDto.setPrice(BigDecimal.valueOf(i * 10));

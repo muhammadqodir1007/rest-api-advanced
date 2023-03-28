@@ -10,6 +10,7 @@ public class ExceptionMessageKey {
      */
     public static final String NO_ENTITY = "identifiable.noObject";
 
+
     public static final String OPERATION_NOT_SUPPORTED_FOR_USER_ENTITY = "user.not.support";
 
 

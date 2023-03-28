@@ -25,6 +25,7 @@ public class ExceptionsHandler {
 
     @ExceptionHandler(DuplicateEntityException.class)
     public final ResponseEntity<Object> handleDuplicateEntityExceptions(DuplicateEntityException ex) {
+
         String details = MessageByLang.toLocale(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse(CONFLICT_EXCEPTION.toString(), details);
         return new ResponseEntity<>(errorResponse, CONFLICT);
@@ -104,5 +105,12 @@ public class ExceptionsHandler {
     public ResponseEntity<ErrorResponse> handleValidationExceptions(PSQLException ex) {
         ErrorResponse errorResponse = new ErrorResponse("40001", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResponse> handleNullPointerExceptions() {
+        String details = MessageByLang.toLocale("attempt.to.create.delete.event.with.null.entity");
+        ErrorResponse errorResponse = new ErrorResponse("50001", details);
+        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
     }
 }

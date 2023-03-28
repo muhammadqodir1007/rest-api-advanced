@@ -44,7 +44,7 @@ public class GiftController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<GiftCertificateDto> updateGiftCertificate(@Valid @PathVariable long id, @RequestBody GiftCertificateDto giftCertificate) {
+    public ResponseEntity<GiftCertificateDto> updateGiftCertificate(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificate) {
         GiftCertificateDto giftCertificateDto = giftCertificateService.update(id, giftCertificate);
         hateoasAdder.addLinks(giftCertificateDto);
         return ResponseEntity.ok(giftCertificateDto);

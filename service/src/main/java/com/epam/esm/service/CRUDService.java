@@ -35,7 +35,7 @@ public interface CRUDService<T> {
      * @param entity the entity to save
      * @return the saved entity
      */
-    T insert(T entity);
+    T insert(T entity) ;
 
     /**
      * Updates an entity by ID.

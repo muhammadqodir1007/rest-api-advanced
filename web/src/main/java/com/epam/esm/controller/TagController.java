@@ -36,12 +36,17 @@ public class TagController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TagDto> createTag(@Valid @RequestBody TagDto tagDto) {
         TagDto createdTag = tagService.insert(tagDto);
         hateoasAdder.addLinks(createdTag);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTag);
+    } @PatchMapping ("/{id}")
+    public ResponseEntity<TagDto> updateTag( @PathVariable long id ,@Valid @RequestBody TagDto tagDto) {
+        TagDto updatedTag = tagService.update(id,tagDto);
+        hateoasAdder.addLinks(updatedTag);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedTag);
     }
+
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

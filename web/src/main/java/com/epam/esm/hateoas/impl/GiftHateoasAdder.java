@@ -23,4 +23,5 @@ public class GiftHateoasAdder implements HateoasAdder<GiftCertificateDto> {
         giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).deleteGiftCertificate(giftCertificateDto.getId())).withRel("delete"));
         giftCertificateDto.add(linkTo(methodOn(GIFT_CONTROLLER_CLASS).createGiftCertificate(giftCertificateDto)).withRel("new"));
         giftCertificateDto.getTags().forEach(tagDto -> tagDto.add(linkTo(methodOn(TAG_CONTROLLER).getTag(tagDto.getId())).withSelfRel()));
-    }}
+    }
+}

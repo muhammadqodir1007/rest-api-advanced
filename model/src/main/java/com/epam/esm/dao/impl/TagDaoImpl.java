@@ -17,9 +17,6 @@ import java.util.Optional;
 public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
     private final QueryCreator<Tag> queryCreator;
 
-    private static final String FIND_BY_MOST_POPULAR_OF_USER_QUERY = "SELECT t FROM GiftCertificate g INNER JOIN g.tags t "
-            + "WHERE g.id IN (SELECT o.giftCertificate.id FROM Order o "
-            + "WHERE o.user.id = :user_id) GROUP BY t.id ORDER BY COUNT(t.id) DESC";
 
     private static final String FIND_MOST_WIDELY_USED_TAG_OF_USER_WITH_HIGHEST_COST_OF_ALL_ORDERS_QUERY =
             String.format("SELECT t FROM GiftCertificate g INNER JOIN g.tags t WHERE g.id IN (SELECT o.giftCertificate.id" +
@@ -40,14 +37,6 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
         return queryCreator;
     }
 
-    @Override
-    public Optional<Tag> findByMostPopularOfUser(long userId) {
-        return entityManager.createQuery(FIND_BY_MOST_POPULAR_OF_USER_QUERY, entityType)
-                .setParameter("user_id", userId)
-                .setMaxResults(1)
-                .getResultList().stream()
-                .findFirst();
-    }
 
     @Override
     public Optional<Tag> findMostPopularTagOfUserWithHighestCostOfAllOrders() {
@@ -66,6 +55,6 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
 
     @Override
     public Tag update(Tag item) {
-        throw new UnsupportedOperationException();
+        return entityManager.merge(item);
     }
 }

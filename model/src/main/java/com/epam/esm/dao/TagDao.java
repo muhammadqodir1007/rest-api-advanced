@@ -13,13 +13,7 @@ public interface TagDao extends BasicDao<Tag> {
      */
     Optional<Tag> findByName(String name);
 
-    /**
-     * @param userId the user id to find most popular tag
-     * @return Optional of found tag
-     * @deprecated Method for finding the most popular tag of user in database.
-     */
-    @Deprecated
-    Optional<Tag> findByMostPopularOfUser(long userId);
+
 
     /**
      * Method for finding the most popular tag of user with the highest cost of all orders in database.

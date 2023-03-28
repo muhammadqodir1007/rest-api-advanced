@@ -88,10 +88,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto update(long id, GiftCertificateDto updatedGiftCertificate) {
         GiftCertificate oldGiftCertificate = giftCertificateDao.findById(id)
                 .orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
+
+        updatedGiftCertificate.setTags(Optional.ofNullable(updatedGiftCertificate.getTags())
+                .orElse(oldGiftCertificate.getTags()));
+
         GiftCertificate updatedGiftCertificateEntity = giftDtoConverter.convertToEntity(updatedGiftCertificate);
         removeDuplicateTags(updatedGiftCertificateEntity);
         List<Tag> updatedTags = tagUpdater.updateListFromDatabase(updatedGiftCertificateEntity.getTags());
         updatedGiftCertificateEntity.setTags(updatedTags);
+
         GiftCertificate updatedCertificate = giftCertificateDao.update(
                 updater.updateObject(updatedGiftCertificateEntity, oldGiftCertificate));
         return giftDtoConverter.convertToDto(updatedCertificate);

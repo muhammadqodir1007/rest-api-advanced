@@ -6,6 +6,7 @@ import com.epam.esm.dto.converter.impl.TagDtoConverter;
 import com.epam.esm.dto.response.ApiResponse;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.*;
+import com.epam.esm.logic.renovator.impl.TagUpdater;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
     private final TagDao tagDao;
     private final TagDtoConverter tagDtoConverter;
+    private final TagUpdater updater;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, TagDtoConverter tagDtoConverter) {
+    public TagServiceImpl(TagDao tagDao, TagDtoConverter tagDtoConverter, TagUpdater updater) {
         this.tagDao = tagDao;
         this.tagDtoConverter = tagDtoConverter;
+        this.updater = updater;
     }
 
     @Override
@@ -45,8 +48,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto insert(TagDto tagDto) {
-        String tagName = tagDto.getName();
-        tagDao.findByName(tagName).ifPresent(tag1 -> {
+        tagDao.findByName(tagDto.getName()).ifPresent(tag1 -> {
             throw new DuplicateEntityException(ExceptionMessageKey.TAG_EXIST);
         });
 
@@ -58,9 +60,10 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto update(long id, TagDto tagDto) {
-        Tag tag = tagDtoConverter.convertToEntity(tagDto);
-        Tag update = tagDao.update(tag);
+        Tag oldTag = tagDao.findById(id).orElseThrow(() -> new NoSuchEntityException(ExceptionMessageKey.NO_ENTITY));
 
+        Tag newTag = tagDtoConverter.convertToEntity(tagDto);
+        Tag update = tagDao.update(updater.updateObject(newTag, oldTag));
         return tagDtoConverter.convertToDto(update);
     }
 
@@ -69,7 +72,7 @@ public class TagServiceImpl implements TagService {
     public ApiResponse removeById(long id) {
         tagDao.removeGiftCertificateHasTag(id);
         tagDao.removeById(id);
-        return new ApiResponse(true,"deleted");
+        return new ApiResponse(true, "deleted");
     }
 
     @Override

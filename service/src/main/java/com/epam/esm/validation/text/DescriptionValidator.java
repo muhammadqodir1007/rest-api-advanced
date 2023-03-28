@@ -8,10 +8,7 @@ public class DescriptionValidator implements ConstraintValidator<ValidDescriptio
 
     @Override
     public boolean isValid(String description, ConstraintValidatorContext constraintValidatorContext) {
-
         if (description.length() < 5 || description.length() > 500) return false;
-
-
         return description.matches("^[a-zA-Z]+$");
     }
 }

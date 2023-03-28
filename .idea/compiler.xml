@@ -21,6 +21,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="dao" options="-parameters" />
       <module name="model" options="-parameters" />
+      <module name="module_3" options="" />
       <module name="service" options="-parameters" />
       <module name="web" options="-parameters" />
     </option>
